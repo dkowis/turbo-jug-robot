@@ -15,6 +15,8 @@ class DemoService extends Actor with SprayActorLogging {
     case HttpRequest(GET, "/", _, _, _) =>
       sender ! index
 
+      //TODO: eveything's going to respond via JSON
+
     case HttpRequest(GET, "/ping", _, _, _) =>
       sender ! HttpResponse(entity = "PONG!")
 
@@ -45,6 +47,7 @@ class DemoService extends Actor with SprayActorLogging {
   ////////////// helpers //////////////
 
   lazy val index = HttpResponse(
+  //TODO: render a simple page for use by spray.io
     entity = HttpBody(`text/html`,
       <html>
         <body>
