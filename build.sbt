@@ -9,6 +9,7 @@ scalaVersion := "2.10.0"
 libraryDependencies ++= Seq (
     "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
     "io.spray" % "spray-servlet" % "1.1-M7",
+    "io.spray" % "spray-routing" % "1.1-M7",
     "io.spray" % "spray-http" % "1.1-M7",
     "com.typesafe.akka" %% "akka-actor" % "2.2-M3",
     "com.typesafe.akka" %% "akka-slf4j" % "2.2-M3",
