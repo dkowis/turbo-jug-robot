@@ -24,3 +24,5 @@ resolvers ++= Seq( "snapshots" at "http://oss.sonatype.org/content/repositories/
     "spray repo" at "http://repo.spray.io",
     "typesafe repo" at "http://repo.typesafe.com/typesafe/releases/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases")
+
+net.virtualvoid.sbt.graph.Plugin.graphSettings
