@@ -37,7 +37,7 @@ seq(jsSettings : _*)
 (webappResources in Compile) <+= (resourceManaged in Compile)
 
 //Settings for the Javascript compilation stuff:
-(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "webapp")
+//(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "webapp")
 
 //Cannot rename variables and have dependency injection still work with Angular.js
 (JsKeys.variableRenamingPolicy in (Compile)) := VariableRenamingPolicy.OFF
