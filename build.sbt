@@ -29,3 +29,15 @@ net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 //Adding stuff for the web plugin
 seq(webSettings :_*)
+
+//Adds stuff for the sbt compilation of javascript and coffeescript
+seq(jsSettings : _*)
+
+//Add the output files from this into the webappResources
+(webappResources in Compile) <+= (resourceManaged in Compile)
+
+//Settings for the Javascript compilation stuff:
+(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "webapp")
+
+//Cannot rename variables and have dependency injection still work with Angular.js
+(JsKeys.variableRenamingPolicy in (Compile)) := VariableRenamingPolicy.OFF
