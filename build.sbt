@@ -41,3 +41,6 @@ seq(jsSettings : _*)
 
 //Cannot rename variables and have dependency injection still work with Angular.js
 (JsKeys.variableRenamingPolicy in (Compile)) := VariableRenamingPolicy.OFF
+
+//Have the javascript task run automatically
+(compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
