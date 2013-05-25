@@ -12,6 +12,9 @@ import HttpMethods._
 class DemoService extends Actor with SprayActorLogging {
 
   def receive = {
+
+    case HttpRequest(GET, "/javascripts/", _, _ , _) =>
+      sender ! index
     case HttpRequest(GET, "/", _, _, _) =>
       sender ! index
 
