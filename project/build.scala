@@ -7,13 +7,13 @@ import ScalateKeys._
 
 object SatjugSuperBotBuild extends Build {
   val Organization = "org.shlrm"
-  val Name = "SatJug Super Bot"
+  val Name = "Turbo Jug Robot"
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.10.0"
   val ScalatraVersion = "2.2.0"
 
   lazy val project = Project (
-    "satjug-super-bot",
+    "turbo-jug-robot",
     file("."),
     settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
       organization := Organization,
