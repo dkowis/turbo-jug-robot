@@ -35,7 +35,9 @@ seq(webSettings :_*)
 seq(jsSettings : _*)
 
 //Add the output files from this into the webappResources
-(webappResources in Compile) <+= (resourceManaged in Compile)
+//Don't want in there, put it into the jar?
+//(webappResources in Compile) <+= (resourceManaged in Compile)
+(resourceGenerators in Compile) <+= (JsKeys.js in Compile)
 
 //Settings for the Javascript compilation stuff:
 //(resourceManaged in (Compile, JsKeys.js)) <<= (sourceDirectory in Compile)(_ / "webapp")
