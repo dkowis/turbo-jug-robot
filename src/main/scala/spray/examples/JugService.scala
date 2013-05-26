@@ -9,6 +9,9 @@ trait JugService extends HttpService {
   val jugRoute = pathPrefix("js") {
     getFromResourceDirectory("javascripts") //this *should* get the javascripts from teh war file...
   } ~
+    pathPrefix("stylesheets") {
+      getFromResourceDirectory("css")
+    } ~
     pathPrefix("images") {
       getFromResourceDirectory("images")
     } ~
