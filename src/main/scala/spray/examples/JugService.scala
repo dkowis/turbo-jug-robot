@@ -1,8 +1,6 @@
 package spray.examples
 
 import spray.routing.HttpService
-import spray.http.MediaTypes
-import MediaTypes._
 
 trait JugService extends HttpService {
   //MAGIC SAUCE IS pathPrefix, to leave unmatched bits!
@@ -14,22 +12,12 @@ trait JugService extends HttpService {
     pathPrefix("images") {
       getFromResourceDirectory("images")
     } ~
-    path("/") {
-      getFromResource("mainPage.html")
+    path("backend") {
+      getFromResource("backend.html")
     } ~
-    //Second route to get the index page
     path("") {
-      get {
-        respondWithMediaType(`text/html`) {
-          complete {
-            <html>
-              <body>
-                <h1>Hello world</h1>
-              </body>
-            </html>
-          }
-        }
-      }
+      //Primary resource, has to be at the bottom
+      getFromResource("mainPage.html")
     }
 
 }
