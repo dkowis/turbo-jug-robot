@@ -31,6 +31,9 @@ net.virtualvoid.sbt.graph.Plugin.graphSettings
 //Adding stuff for the web plugin
 seq(webSettings :_*)
 
+//Adds stuff for the less-sbt compiler
+seq(lessSettings:_*)
+
 //Adds stuff for the sbt compilation of javascript and coffeescript
 seq(jsSettings : _*)
 
@@ -47,3 +50,4 @@ seq(jsSettings : _*)
 
 //Have the javascript task run automatically
 (compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
+
