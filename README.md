@@ -1,12 +1,15 @@
-# SatJug Super Bot #
+turbo-jug-robot
+===============
 
-## Build & Run ##
+A Spray.io and Angular.js application for the San Antonio Java Users Group to do cool things with stuff. And maybe be useful.
 
-```sh
-$ cd SatJug_Super_Bot
-$ ./sbt
-> container:start
-> browse
-```
+See the issues for current targeted feature sets :D
 
-If `browse` doesn't launch your browser, manually open [http://localhost:8080/](http://localhost:8080/) in your browser.
+Feel free to make pull requests, or add features to issues.
+
+## Tech Notes
+SBT Plugins:
+ * [Javascript/coffeescript compilation](https://github.com/untyped/sbt-plugins/tree/master/sbt-js)
+ * [Container](https://github.com/JamesEarlDouglas/xsbt-web-plugin)
+ * [Less/Css Compilation](https://github.com/softprops/less-sbt)
+ * [IDEA project generation](https://github.com/mpeltonen/sbt-idea)
