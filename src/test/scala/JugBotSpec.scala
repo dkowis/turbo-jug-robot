@@ -9,9 +9,21 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
   def actorRefFactory = system
 
   describe("Static routes for the jugbot") {
-    it("returns the primary javascript") (pending)
-    it("returns the bootstrap stylesheet") (pending)
-    it("returns one of the images") (pending)
+    it("returns the primary javascript") {
+      Get("/js/app.js") ~> jugBot ~> check {
+        handled should be (true)
+      }
+    }
+    it("returns the bootstrap stylesheet") {
+      Get("/stylesheets/bootstrap.css") ~> jugBot ~> check {
+        handled should be (true)
+      }
+    }
+    it("returns one of the images") {
+      Get("/images/glyphicons-halflings.png") ~> jugBot ~> check {
+        handled should be (true)
+      }
+    }
   }
 
   describe("Routes for the jugbot") {
@@ -23,7 +35,7 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
           }
         }
 
-        it("handles a get to /meetings/:id") {
+        it("handles a get to /meetings/:uuid") {
           val uuid = UUID.randomUUID()
           Get(s"/meetings/${uuid}") ~> jugBot ~> check {
             handled should be (true)
