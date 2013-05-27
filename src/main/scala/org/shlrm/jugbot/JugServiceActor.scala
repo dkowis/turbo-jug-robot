@@ -1,4 +1,4 @@
-package spray.examples
+package org.shlrm.jugbot
 
 import spray.util.SprayActorLogging
 import akka.actor.Actor

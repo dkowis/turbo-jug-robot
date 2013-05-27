@@ -1,7 +1,8 @@
+package org.shlrm.jugbot
+
 import java.util.UUID
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import spray.examples.JugService
 import spray.testkit.ScalatestRouteTest
 
 class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers with JugService {

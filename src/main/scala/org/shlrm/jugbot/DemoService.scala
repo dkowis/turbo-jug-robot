@@ -1,4 +1,4 @@
-package spray.examples
+package org.shlrm.jugbot
 
 import java.util.concurrent.TimeUnit._
 import scala.concurrent.duration.Duration
