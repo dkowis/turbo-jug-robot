@@ -7,6 +7,6 @@ class JugServiceActor extends Actor with SprayActorLogging with JugService {
 
   def actorRefFactory = context
 
-  def receive = runRoute(jugRoute)
+  def receive = runRoute(jugBot)
 
 }
