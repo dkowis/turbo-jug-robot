@@ -19,7 +19,10 @@ libraryDependencies ++= Seq (
    "javax.servlet" % "javax.servlet-api" % "3.0.1" % "provided",
     "ch.qos.logback" % "logback-classic" % "1.0.12",
     //Doesn't work with jetty 9.0 yet, not sure what the deal is
-    "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "container"
+    "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "container",
+    //Lets add the cucumber-jvm stuff and make cucumbers happen
+    "info.cukes" % "cucumber-junit" % "1.1.3",
+    "info.cukes" % "cucumber-scala" % "1.1.3"
     )
 
 resolvers ++= Seq( "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
