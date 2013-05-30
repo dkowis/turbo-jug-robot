@@ -4,6 +4,8 @@ Feature: JSON survey information
   I need to be able to pull the results of that survey.
   I Need to be able to get a list of meetings, so that I know what meetings are available.
 
+  TODO: the server needs to be running!!!
+
 
   Scenario: Create a meeting
     When I POST the JSON to "/meetings":
