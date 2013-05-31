@@ -7,6 +7,7 @@ scalaVersion := "2.10.0"
 
 //Using spray.io versions 1.1-M7
 libraryDependencies ++= Seq (
+    "net.databinder.dispatch" %% "dispatch-core" % "0.10.1" % "test",
     "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
     "io.spray" % "spray-testkit" % "1.1-M7" % "test",
     "io.spray" % "spray-servlet" % "1.1-M7",
