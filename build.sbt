@@ -10,7 +10,7 @@ libraryDependencies ++= Seq (
     "net.databinder.dispatch" %% "dispatch-core" % "0.10.1" % "test",
     "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
     "io.spray" % "spray-testkit" % "1.1-M7" % "test",
-    "io.spray" % "spray-servlet" % "1.1-M7",
+    "io.spray" % "spray-can" % "1.1-M7",
     "io.spray" % "spray-routing" % "1.1-M7",
     "io.spray" % "spray-http" % "1.1-M7",
     "com.typesafe.akka" %% "akka-actor" % "2.2-M3",
