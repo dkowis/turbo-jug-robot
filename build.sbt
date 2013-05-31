@@ -55,3 +55,7 @@ seq(jsSettings : _*)
 //Have the javascript task run automatically
 (compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
 
+//Add the cucumber stuff!
+seq(cucumberSettings : _*)
+
+cucumberStepsBasePackage := "org.shlrm.jugbot.cukes"
