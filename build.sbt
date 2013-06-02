@@ -17,7 +17,11 @@ libraryDependencies ++= Seq (
     "ch.qos.logback" % "logback-classic" % "1.0.12",
     //Lets add the cucumber-jvm stuff and make cucumbers happen
     "info.cukes" % "cucumber-junit" % "1.1.3",
-    "info.cukes" % "cucumber-scala" % "1.1.3"
+    "info.cukes" % "cucumber-scala" % "1.1.3",
+    //Adding slick, and database stuff
+    "com.typesafe.slick" %% "slick" % "1.0.1-RC1",
+    "com.h2database" % "h2" % "1.3.166",
+    "postgresql" % "postgresql" % "9.1-901.jdbc4"
     )
 
 resolvers ++= Seq( "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
