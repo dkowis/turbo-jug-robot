@@ -12,9 +12,8 @@ libraryDependencies ++= Seq (
     "io.spray" % "spray-testkit" % "1.1-M7" % "test",
     "io.spray" % "spray-can" % "1.1-M7",
     "io.spray" % "spray-routing" % "1.1-M7",
-    "io.spray" % "spray-http" % "1.1-M7",
-    "com.typesafe.akka" %% "akka-actor" % "2.2-M3",
-    "com.typesafe.akka" %% "akka-slf4j" % "2.2-M3",
+    "com.typesafe.akka" %% "akka-actor" % "2.1.4",
+    "com.typesafe.akka" %% "akka-slf4j" % "2.1.4",
     "ch.qos.logback" % "logback-classic" % "1.0.12",
     //Lets add the cucumber-jvm stuff and make cucumbers happen
     "info.cukes" % "cucumber-junit" % "1.1.3",
