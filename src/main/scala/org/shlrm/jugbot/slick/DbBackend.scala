@@ -14,7 +14,11 @@ trait Profile {
   val profile: ExtendedProfile
 }
 
-case class Meeting(title: String, date: Date, id: Option[Int] = None)
+case class Meeting(title: String, date: Date, id: Option[Int] = None) {
+  def surveyResults = {
+    ???
+  }
+}
 
 trait MeetingComponent {
   this: Profile =>
@@ -24,14 +28,14 @@ trait MeetingComponent {
 
   //... to be able import profile.simple._
 
-  object Meetings extends Table[(String, Date, Option[Int])]("MEETINGS") {
+  object Meetings extends Table[Meeting]("MEETINGS") {
     def id = column[Option[Int]]("MEETING_ID", O.PrimaryKey, O.AutoInc)
 
     def date = column[Date]("MEETING_DATE", O.NotNull)
 
     def title = column[String]("MEETING_TITLE", O.NotNull)
 
-    def * = title ~ date ~ id
+    def * = title ~ date ~ id <> (Meeting, Meeting.unapply _)
 
     //This seems really icky, but I think it's right...
     val autoInc = title ~ date returning id into {
@@ -45,35 +49,27 @@ trait MeetingComponent {
 
 }
 
-case class SurveyResult(count: Int, total: Int, meeting: Meeting, id: Option[Int] = None)
+case class SurveyResult(count: Int, total: Int, meeting:Meeting, id: Option[Int] = None)
 
 trait SurveyResultComponent {
   this:Profile with MeetingComponent =>
   import profile.simple._
 
+  //TODO: how do I do the type mapping when I have nested thingies
   object SurveyResults extends Table[(Int, Int, Int, Option[Int])]("SURVEY_RESULTS") {
+
     def id = column[Option[Int]]("SURVEY_RESULTS_ID", O.PrimaryKey, O.AutoInc)
     def count = column[Int]("COUNT", O.NotNull)
     def total = column[Int]("TOTAL", O.NotNull)
     //TODO: use a foreign key
     def meetingId = column[Int]("MEETING_ID", O.NotNull)
+    def meeting = foreignKey("MEETING_FK", meetingId, Meetings)(_.id.get)
 
     def * = count ~ total ~ meetingId ~ id
 
     private def autoInc(implicit session:Session) = count ~ total ~ meetingId returning id into {
       //Hrm, how does this work?
       case (_,id) => id
-    }
-
-    def insert(result: SurveyResult)(implicit session:Session): SurveyResult = {
-      val meeting = if (result.meeting.id.isEmpty) {
-        Meetings.insert(result.meeting)
-      } else {
-        result.meeting
-      }
-
-      val id = autoInc.insert(result.count, result.total, meeting.id.get)
-      result.copy(meeting = meeting, id = id)
     }
   }
 }

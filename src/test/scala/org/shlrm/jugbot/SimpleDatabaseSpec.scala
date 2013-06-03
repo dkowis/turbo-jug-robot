@@ -44,7 +44,7 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
                 Meetings.insert(Meeting(s"Meeting ${n}", Date.valueOf(s"2013-01-${n}")))
             }
 
-            val q = tableToQuery(Meetings)
+            val q = Query(Meetings)
             val allMeetings = q.list.toList
 
             allMeetings.length should be(10)
@@ -52,9 +52,36 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
         }
       }
       it("supports getting a single meeting") {
-        fail("your mom is too fat")
+        db withSession {
+          implicit session: Session =>
+            dal.create
+
+            //Stick a pile of meetings in there
+            (10 to 19).map {
+              n =>
+                Meetings.insert(Meeting(s"Meeting ${n}", Date.valueOf(s"2013-01-${n}")))
+            }
+
+            val q = Query(Meetings)
+            val results = q.filter(_.title === "Meeting 14").list
+            results.size should be(1)
+
+            val mtg = results.head
+            mtg.title should be("Meeting 14")
+            mtg.date should be(Date.valueOf("2013-01-14"))
+        }
       }
-      it("supports getting a survey result from a meeting")(pending)
+      it("supports getting a survey result from a meeting") {
+        db withSession {
+          implicit session: Session =>
+            dal.create
+            val meeting = Meetings.insert(Meeting("Meeting the best", Date.valueOf("2013-02-17")))
+
+            meeting.surveyResults
+            fail("Need to figure out how to get results")
+
+        }
+      }
     }
   }
 
