@@ -3,6 +3,13 @@ package org.shlrm.jugbot.slick
 import scala.slick.driver.ExtendedProfile
 import java.sql.Date
 
+/*
+Basically, stole everything from here:
+https://github.com/slick/slick-examples/blob/master/src/main/scala/com/typesafe/slick/examples/lifted/MultiDBCakeExample.scala
+
+So far, I think I understand most of it
+ */
+
 trait Profile {
   val profile: ExtendedProfile
 }
@@ -48,6 +55,7 @@ trait SurveyResultComponent {
     def id = column[Option[Int]]("SURVEY_RESULTS_ID", O.PrimaryKey, O.AutoInc)
     def count = column[Int]("COUNT", O.NotNull)
     def total = column[Int]("TOTAL", O.NotNull)
+    //TODO: use a foreign key
     def meetingId = column[Int]("MEETING_ID", O.NotNull)
 
     def * = count ~ total ~ meetingId ~ id
@@ -59,7 +67,7 @@ trait SurveyResultComponent {
 
     def insert(result: SurveyResult)(implicit session:Session): SurveyResult = {
       val meeting = if (result.meeting.id.isEmpty) {
-        Meetings.insert(meeting)
+        Meetings.insert(result.meeting)
       } else {
         result.meeting
       }
