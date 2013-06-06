@@ -2,7 +2,7 @@ package org.shlrm.jugbot
 
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.matchers.ShouldMatchers
-import org.shlrm.jugbot.slick.{Meeting, DAL}
+import org.shlrm.jugbot.slick.{SurveyResult, Meeting, DAL}
 import scala.slick.driver.H2Driver
 import scala.slick.session.Database
 import java.sql.Date
@@ -76,9 +76,20 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
           implicit session: Session =>
             dal.create
             val meeting = Meetings.insert(Meeting("Meeting the best", Date.valueOf("2013-02-17")))
+            //inserts the item into the database, and there's logic to return the whole item, not just the affected rows
+            val newItem = SurveyResults.insert(SurveyResult(1, 0, meeting.id.get, None))
 
-            meeting.surveyResults
-            fail("Need to figure out how to get results")
+            //See http://slick.typesafe.com/doc/1.0.1/lifted-embedding.html#querying
+            //get all the items in the database to see how many there are
+            val all = Query(SurveyResults).list
+            all.length should be(1)
+
+            //construct a query filtering only for the one we want.
+            val query = Query(SurveyResults).filter(_.meetingId === meeting.id.get)
+            query.list.length should be(1)
+            //get a query result, and stick it into a SurveyResult, which is more meaningful
+            val qr = SurveyResult.tupled(query.first)
+            qr should be(newItem)
 
         }
       }

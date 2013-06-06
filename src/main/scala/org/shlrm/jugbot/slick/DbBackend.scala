@@ -15,9 +15,6 @@ trait Profile {
 }
 
 case class Meeting(title: String, date: Date, id: Option[Int] = None) {
-  def surveyResults = {
-    ???
-  }
 }
 
 trait MeetingComponent {
@@ -49,7 +46,7 @@ trait MeetingComponent {
 
 }
 
-case class SurveyResult(count: Int, total: Int, meeting:Meeting, id: Option[Int] = None)
+case class SurveyResult(count: Int, total: Int, meetingId:Int, id: Option[Int] = None)
 
 trait SurveyResultComponent {
   this:Profile with MeetingComponent =>
@@ -70,6 +67,11 @@ trait SurveyResultComponent {
     private def autoInc(implicit session:Session) = count ~ total ~ meetingId returning id into {
       //Hrm, how does this work?
       case (_,id) => id
+    }
+
+    def insert(sr:SurveyResult)(implicit session:Session) : SurveyResult = {
+      val id = autoInc.insert(sr.count, sr.total, sr.meetingId)
+      sr.copy(id = id)
     }
   }
 }
