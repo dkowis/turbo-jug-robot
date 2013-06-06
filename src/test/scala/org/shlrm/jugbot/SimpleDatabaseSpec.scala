@@ -12,9 +12,8 @@ import java.sql.Date
  * Then I'll take what I've prototyped out here, and make an actor for it, and stick it in the application
  */
 class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter {
-  describe("For H2") {
-    val dal = new DAL(H2Driver)
-    val db = Database.forURL("jdbc:h2:mem:test1", driver = "org.h2.Driver")
+
+  def runTests(dal: DAL, db: Database) = {
     import dal._
     import dal.profile.simple._
 
@@ -94,6 +93,12 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
         }
       }
     }
+  }
+
+  describe("For H2") {
+    val dal = new DAL(H2Driver)
+    val db = Database.forURL("jdbc:h2:mem:test1", driver = "org.h2.Driver")
+    runTests(dal, db)
   }
 
 }
