@@ -99,7 +99,7 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
     }
   }
 
-  val config = ConfigFactory.load().getConfig("test")
+  val config = ConfigFactory.load().getConfig("unitTest")
 
   describe("For H2") {
     val dal = new DAL(H2Driver)
