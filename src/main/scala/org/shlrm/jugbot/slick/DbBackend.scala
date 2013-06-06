@@ -83,4 +83,12 @@ class DAL(override val profile: ExtendedProfile) extends MeetingComponent with S
     //This sets up the tables, I want to use flyway, or liquibase instead later...
     (Meetings.ddl ++ SurveyResults.ddl).create
   }
+
+  /**
+   * Just a handy method to drop the tables, mostly for testing
+   * @param session
+   */
+  def drop(implicit session:Session):Unit = {
+    (Meetings.ddl ++ SurveyResults.ddl).drop
+  }
 }

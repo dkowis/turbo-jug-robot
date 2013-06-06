@@ -3,9 +3,10 @@ package org.shlrm.jugbot
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.matchers.ShouldMatchers
 import org.shlrm.jugbot.slick.{SurveyResult, Meeting, DAL}
-import scala.slick.driver.H2Driver
+import scala.slick.driver.{PostgresDriver, H2Driver}
 import scala.slick.session.Database
 import java.sql.Date
+import com.typesafe.config.ConfigFactory
 
 /**
  * This test class is less about testing my application, and more about figuring out how to use Slick
@@ -30,6 +31,7 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
             val meeting = Meetings.insert(Meeting("A test meeting", new java.sql.Date(new java.util.Date().getTime())))
 
             meeting.id.get should be(1)
+            dal.drop
         }
 
       }
@@ -47,7 +49,7 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
             val allMeetings = q.list.toList
 
             allMeetings.length should be(10)
-
+            dal.drop
         }
       }
       it("supports getting a single meeting") {
@@ -68,6 +70,8 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
             val mtg = results.head
             mtg.title should be("Meeting 14")
             mtg.date should be(Date.valueOf("2013-01-14"))
+            dal.drop
+
         }
       }
       it("supports getting a survey result from a meeting") {
@@ -89,16 +93,26 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
             //get a query result, and stick it into a SurveyResult, which is more meaningful
             val qr = SurveyResult.tupled(query.first)
             qr should be(newItem)
-
+            dal.drop
         }
       }
     }
   }
 
+  val config = ConfigFactory.load().getConfig("test")
+
   describe("For H2") {
     val dal = new DAL(H2Driver)
     val db = Database.forURL("jdbc:h2:mem:test1", driver = "org.h2.Driver")
     runTests(dal, db)
+  }
+
+  if (config.getBoolean("pg.enabled")) {
+    describe("For Pgsql") {
+      val dal = new DAL(PostgresDriver)
+      val db = Database.forURL(url = config.getString("pg.url"), user = config.getString("pg.user"), password = config.getString("pg.pass"))
+      runTests(dal, db)
+    }
   }
 
 }
