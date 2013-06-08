@@ -16,6 +16,9 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
   val config = ConfigFactory.load().getConfig("integrationTest")
 
+  //OH NOES MUTABLE!
+  var body = ""
+
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
     //TODO: need to split up the path!
@@ -45,21 +48,20 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   }
   When( """^I GET to "([^"]*)"$""") {
     (path: String) => {
-      println(s"PATH: ${path}")
       //Yay this works
       //Now lets do some database stuff
+      def builtRequest = service.setUrl(server + path).GET
 
-      def builtRequest = (service / "meetings").GET
       val request = Http(builtRequest)
       val response = request()
       response.getStatusCode() should be(200)
+      body = response.getResponseBody
 
-      //TODO: make a request against the right stuff?
     }
   }
   Then( """^I receive the JSON:$""") {
     (rawJson: String) =>
     //TODO: match up the output of the call with the raw JSON
-      throw new PendingException()
+      body should be(rawJson)
   }
 }
