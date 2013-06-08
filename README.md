@@ -35,3 +35,7 @@ Libraries:
  * [spray-json](https://github.com/spray/spray-json)
  * [Slick](http://slick.typesafe.com/). This is a particularly awesome database access library. **NOT** an ORM.
 
+Testing stuff:
+ * [Cucumber-jvm](https://github.com/cucumber/cucumber-jvm)
+ * [ScalaTest](http://www.scalatest.org/) Specifically the FunSpec style. Love it!
+ 
