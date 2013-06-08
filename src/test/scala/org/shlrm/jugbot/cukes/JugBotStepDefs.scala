@@ -15,6 +15,8 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   val service = host("localhost", 8080)
 
   val config = ConfigFactory.load().getConfig("integrationTest")
+  println(s"Using database: ${config.getConfig("db")}")
+
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
@@ -31,12 +33,13 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     () => {
       //Put a default meeting into the database
       val dal = new DAL(H2Driver)
-      val db = Database.forURL(config.getString("db.url"), driver = config.getString("db.driver"))
+      val db = Database.forURL(config.getString("db.url"),
+        user = config.getString("db.user"),
+        password = config.getString("db.pass"),
+        driver = config.getString("db.driver"))
       import dal.profile.simple._
       db withSession {
         implicit session: Session =>
-        //TODO: need to do flyway or something to make sure this exists first
-
           import dal._
           Meetings.insert(Meeting("TEST MEETING", Date.valueOf("2013-02-17")))
       }
