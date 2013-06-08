@@ -7,8 +7,9 @@ import scala.slick.session.Database
 import spray.json._
 import java.sql.Date
 import org.shlrm.jugbot.slick.Meeting
+import akka.event.slf4j.SLF4JLogging
 
-class MeetingsHandler(implicit config: Config) {
+class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
 
   //TODO: make it handle multiple databases, pgsql in prod, h2 in local/test
   val dal = new DAL(H2Driver)
@@ -25,6 +26,7 @@ class MeetingsHandler(implicit config: Config) {
   def listMeetings: List[Meeting] = {
     db withSession {
       implicit session: Session => {
+        log.debug("Querying database!")
         Query(Meetings).list.toList
       }
     }

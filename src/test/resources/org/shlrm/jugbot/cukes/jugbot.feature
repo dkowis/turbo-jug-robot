@@ -13,7 +13,7 @@ Feature: JSON survey information
      "title": "A test meeting"
   }
   """
-    Then the response status is 204 "CREATED"
+    Then the response status is 201 "CREATED"
     And the backend contains a meeting:
       | Date       | Title          |
       | 2013-05-30 | A test meeting |

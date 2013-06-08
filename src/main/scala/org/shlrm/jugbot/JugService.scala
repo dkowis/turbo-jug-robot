@@ -5,8 +5,11 @@ import com.typesafe.config.ConfigFactory
 import spray.http.{MediaTypes, StatusCodes, StatusCode}
 import org.shlrm.jugbot.slick.Meeting
 import MediaTypes._
+import akka.event.slf4j.SLF4JLogging
+import akka.event.LoggingAdapter
 
 trait JugService extends HttpService {
+
   import spray.json._
   import MeetingsJsonProtocol._
   import SprayJsonSupport._
@@ -28,12 +31,12 @@ trait JugService extends HttpService {
       //TODO: marshal or unmarshal?
       entity(as[String]) {
         data => {
-          complete {
-            val meeting = (data asJson).convertTo[Meeting]
-
-            "wut wut"
+          respondWithStatus(StatusCodes.Created) {
+            complete {
+              val meeting = (data asJson).convertTo[Meeting]
+              ""
+            }
           }
-
         }
       }
     } ~

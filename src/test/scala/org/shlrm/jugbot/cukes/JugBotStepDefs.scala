@@ -29,7 +29,6 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
 
   //OH NOES MUTABLE!
-  var body = ""
   var insertedMeeting: Meeting = null
   var response: Response = null
 
@@ -78,13 +77,13 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
           import dal._
           val meetings = Query(Meetings).list.toList
           meetings.length should be(tableMap.length)
-          tableMap.map( map => {
+          tableMap.map(map => {
             //Each row is a map: Date and Title
             val title = map("Title")
             val date = Date.valueOf(map("Date"))
 
             //Ensure we have only one of this combination in the list
-            meetings.filter( m => {
+            meetings.filter(m => {
               m.title == title && m.date == date
             }).length should be(1)
           })
@@ -126,23 +125,22 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     (path: String) => {
       //Yay this works
       //Now lets do some database stuff
-      def builtRequest = service.setUrl(server + path).GET
+      def builtRequest = service.setUrl(server + path).
+        setHeader("accept", "application/json").
+        GET
 
       val request = Http(builtRequest)
-      val response = request()
-      response.getStatusCode() should be(200)
-      body = response.getResponseBody
-
+      response = request()
     }
   }
   Then( """^I recieve a list containing my meeting:$""") {
     (rawJson: String) => {
       //Mutilate the rawJson, to replace magic stuff
       val parsed = rawJson.replaceAll("\\$meeting\\.id", insertedMeeting.id.get.toString)
-      response.getContentType should be("application/json")
+      response.getContentType should startWith("application/json") //Good enough!
       //TODO: match up the output of the call with the raw JSON
       val requiredJson = parsed.asJson
-      val receivedJson = body.asJson
+      val receivedJson = response.getResponseBody.asJson
       receivedJson should be(requiredJson)
     }
   }
