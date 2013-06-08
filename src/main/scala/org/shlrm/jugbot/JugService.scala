@@ -42,7 +42,7 @@ trait JugService extends HttpService {
         path("") {
           get {
             complete {
-              "I'm not sure"
+              "Meeting details"
             }
           }
         }

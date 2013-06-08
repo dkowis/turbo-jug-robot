@@ -144,9 +144,11 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   When( """^I GET to the default meeting's ID$""") {
     () =>
     //TODO: probably no way to call a step from another step, like I used to
-      val builder = service.setUrl(server + "/meetings/" + defaultMeeting.id.get).setHeader("accept", "application/json").GET
-      def request = Http(builder)
+      //Sweet jesus, dispatch is painful to use...
+      def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString)
+      val request = Http(builtRequest)
       response = request()
+      response.getStatusCode should be(200)
   }
   Then( """^I receive a JSON representation of the meeting:$""") {
     (arg0: String) =>
