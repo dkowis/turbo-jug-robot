@@ -65,7 +65,6 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
           q.mutate { r =>
             r.row = r.row.copy(_1 = r.row._1 + 1, _2 = r.row._2 + answers.q1 + answers.q2)
           }
-
         }
       }
     }

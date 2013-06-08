@@ -18,7 +18,6 @@ Feature: JSON survey information
       | Date       | Title          |
       | 2013-05-30 | A test meeting |
 
-
   Scenario: Get a list of meetings
     Given the database is empty
     Given the default meeting exists
