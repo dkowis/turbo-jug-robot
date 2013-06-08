@@ -11,6 +11,10 @@ import org.scalatest.junit.ShouldMatchersForJUnit
 import com.typesafe.config.ConfigFactory
 
 class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
+
+  import spray.json._
+  import DefaultJsonProtocol._
+
   val server = "http://localhost:8080"
   val service = host("localhost", 8080)
 
@@ -60,8 +64,11 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     }
   }
   Then( """^I receive the JSON:$""") {
-    (rawJson: String) =>
-    //TODO: match up the output of the call with the raw JSON
-      body should be(rawJson)
+    (rawJson: String) => {
+      //TODO: match up the output of the call with the raw JSON
+      val requiredJson = rawJson.asJson
+      val receivedJson = body.asJson
+      receivedJson should be(requiredJson)
+    }
   }
 }
