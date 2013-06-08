@@ -21,13 +21,15 @@ Feature: JSON survey information
 
 
   Scenario: Get a list of meetings
+    Given the database is empty
     Given the default meeting exists
     When I GET to "/meetings"
-    Then I receive the JSON:
+    Then I recieve a list containing my meeting:
     """
   [
     {
-        "date": "2013-05-30 17:33:54 -0500",
+        "id": $meeting.id,
+        "date": "2013-02-17",
         "title": "test meeting"
     }
   ]

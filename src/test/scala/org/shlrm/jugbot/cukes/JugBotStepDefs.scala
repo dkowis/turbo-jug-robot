@@ -1,7 +1,7 @@
 package org.shlrm.jugbot.cukes
 
 import cucumber.api.scala.{EN, ScalaDsl}
-import cucumber.api.PendingException
+import cucumber.api.{DataTable, PendingException}
 import dispatch._, Defaults._
 import scala.slick.driver.H2Driver
 import org.shlrm.jugbot.slick.{Meeting, DAL}
@@ -20,8 +20,34 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
   val config = ConfigFactory.load().getConfig("integrationTest")
 
+  val dal = new DAL(H2Driver)
+  val db = Database.forURL(config.getString("db.url"),
+    user = config.getString("db.user"),
+    password = config.getString("db.pass"),
+    driver = config.getString("db.driver"))
+
+
   //OH NOES MUTABLE!
   var body = ""
+  var insertedMeeting: Meeting = null
+
+  /**
+   * I'm doing this part wrong, I'm not sure how to create a function to wrap stuff the way I want.
+   * @param logic
+   */
+  def database(logic: => Unit) = {
+    //Put a default meeting into the database
+    val dal = new DAL(H2Driver)
+    val db = Database.forURL(config.getString("db.url"),
+      user = config.getString("db.user"),
+      password = config.getString("db.pass"),
+      driver = config.getString("db.driver"))
+    import dal.profile.simple._
+    db withSession {
+      implicit session: Session =>
+        logic
+    }
+  }
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
@@ -34,19 +60,29 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     //TODO: check the result of the call
       throw new PendingException()
   }
-  Given( """^the default meeting exists$""") {
+
+  Given( """^the database is empty$""") {
     () => {
-      //Put a default meeting into the database
-      val dal = new DAL(H2Driver)
-      val db = Database.forURL(config.getString("db.url"),
-        user = config.getString("db.user"),
-        password = config.getString("db.pass"),
-        driver = config.getString("db.driver"))
       import dal.profile.simple._
       db withSession {
         implicit session: Session =>
           import dal._
-          Meetings.insert(Meeting("TEST MEETING", Date.valueOf("2013-02-17")))
+          //Delete ALL! ERMAGHERDS
+          Query(Meetings).delete
+          Query(SurveyResults).delete
+      }
+    }
+  }
+
+  Given( """^the default meeting exists$""") {
+    () => {
+      //Put a default meeting into the database
+      import dal.profile.simple._
+      db withSession {
+        implicit session: Session =>
+          import dal._
+          insertedMeeting = Meetings.insert(Meeting("test meeting", Date.valueOf("2013-02-17")))
+
       }
     }
   }
@@ -63,12 +99,15 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
     }
   }
-  Then( """^I receive the JSON:$""") {
+  Then( """^I recieve a list containing my meeting:$""") {
     (rawJson: String) => {
+      //Mutilate the rawJson, to replace magic stuff
+      val parsed = rawJson.replaceAll("\\$meeting\\.id", insertedMeeting.id.get.toString)
       //TODO: match up the output of the call with the raw JSON
-      val requiredJson = rawJson.asJson
+      val requiredJson = parsed.asJson
       val receivedJson = body.asJson
       receivedJson should be(requiredJson)
     }
   }
+
 }
