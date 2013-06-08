@@ -2,10 +2,16 @@ package org.shlrm.jugbot
 
 import spray.routing.HttpService
 import com.typesafe.config.ConfigFactory
+import spray.http.{MediaTypes, StatusCodes, StatusCode}
+import org.shlrm.jugbot.slick.Meeting
+import MediaTypes._
 
 trait JugService extends HttpService {
   import spray.json._
-  import MeetingsJsonProtocol._ //Should include the default types...
+  import MeetingsJsonProtocol._
+  import SprayJsonSupport._
+
+  //Should include the default types...
 
   implicit val config = ConfigFactory.load().getConfig("integrationTest") //TODO: get this from environment!
 
@@ -20,15 +26,23 @@ trait JugService extends HttpService {
     //TODO: wrap this in some kind of authenticated somehow
     post {
       //TODO: marshal or unmarshal?
-      complete {
-        //create a meeting
-        "meeting id"
+      entity(as[String]) {
+        data => {
+          complete {
+            val meeting = (data asJson).convertTo[Meeting]
+
+            "wut wut"
+          }
+
+        }
       }
     } ~
       get {
         //TODO: could probably do caching
-        complete {
-          meetingsHandler.listMeetings.toJson.toString
+        respondWithMediaType(`application/json`) {
+          complete {
+            meetingsHandler.listMeetings
+          }
         }
       }
   } ~
