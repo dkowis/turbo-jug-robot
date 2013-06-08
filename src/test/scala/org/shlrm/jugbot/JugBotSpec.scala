@@ -12,17 +12,17 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
   describe("Static routes for the jugbot") {
     it("returns the primary javascript") {
       Get("/js/app.js") ~> jugBot ~> check {
-        handled should be (true)
+        handled should be(true)
       }
     }
     it("returns the bootstrap stylesheet") {
       Get("/stylesheets/bootstrap.css") ~> jugBot ~> check {
-        handled should be (true)
+        handled should be(true)
       }
     }
     it("returns one of the images") {
       Get("/images/glyphicons-halflings.png") ~> jugBot ~> check {
-        handled should be (true)
+        handled should be(true)
       }
     }
   }
@@ -32,17 +32,26 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
       describe("functionality for the survey takers") {
         it("handles a get to /meetings") {
           Get("/meetings") ~> jugBot ~> check {
-            handled should be (true)
+            handled should be(true)
           }
         }
 
         it("handles a get to /meetings/:id") {
-          val id = 1
-          Get(s"/meetings/${id}") ~> jugBot ~> check {
-            handled should be (true)
+          Get(s"/meetings/1") ~> jugBot ~> check {
+            handled should be(true)
           }
         }
-        it("handles a post to /meetings/:id")(pending)
+        it("handles a get to /meetings/:id/survey") {
+          Get("/meetings/1/survey") ~> jugBot ~> check {
+            handled should be(true)
+          }
+        }
+
+        it("handles a post to /meetings/:id/survey") {
+          Post("/meetings/1/survey") ~> jugBot ~> check {
+            handled should be(true)
+          }
+        }
       }
       describe("functionality for the backend") {
         it("handles a get to /meetings/:id/results")(pending)
