@@ -91,7 +91,7 @@ class SimpleDatabaseSpec extends FunSpec with ShouldMatchers with BeforeAndAfter
             val query = Query(SurveyResults).filter(_.meetingId === meeting.id.get)
             query.list.length should be(1)
             //get a query result, and stick it into a SurveyResult, which is more meaningful
-            val qr = SurveyResult.tupled(query.first)
+            val qr = query.first
             qr should be(newItem)
             dal.drop
         }

@@ -23,8 +23,6 @@ trait MeetingComponent {
 
   import profile.simple._
 
-  //... to be able import profile.simple._
-
   object Meetings extends Table[Meeting]("MEETINGS") {
     def id = column[Option[Int]]("MEETING_ID", O.PrimaryKey, O.AutoInc)
 
@@ -32,7 +30,7 @@ trait MeetingComponent {
 
     def title = column[String]("MEETING_TITLE", O.NotNull)
 
-    def * = title ~ date ~ id <> (Meeting, Meeting.unapply _)
+    def * = title ~ date ~ id <>(Meeting, Meeting.unapply _)
 
     //This seems really icky, but I think it's right...
     val autoInc = title ~ date returning id into {
@@ -46,40 +44,43 @@ trait MeetingComponent {
 
 }
 
-case class SurveyResult(count: Int, total: Int, meetingId:Int, id: Option[Int] = None)
+case class SurveyResult(count: Int, total: Int, meetingId: Int, id: Option[Int] = None)
 
 trait SurveyResultComponent {
-  this:Profile with MeetingComponent =>
+  this: Profile with MeetingComponent =>
+
   import profile.simple._
 
-  //TODO: how do I do the type mapping when I have nested thingies
-  object SurveyResults extends Table[(Int, Int, Int, Option[Int])]("SURVEY_RESULTS") {
-
+  object SurveyResults extends Table[SurveyResult]("SURVEY_RESULTS") {
     def id = column[Option[Int]]("SURVEY_RESULTS_ID", O.PrimaryKey, O.AutoInc)
+
     def count = column[Int]("COUNT", O.NotNull)
+
     def total = column[Int]("TOTAL", O.NotNull)
-    //TODO: use a foreign key
+
     def meetingId = column[Int]("MEETING_ID", O.NotNull)
+
     def meeting = foreignKey("MEETING_FK", meetingId, Meetings)(_.id.get)
 
-    def * = count ~ total ~ meetingId ~ id
+    def * = count ~ total ~ meetingId ~ id <>(SurveyResult, SurveyResult.unapply _)
 
-    private def autoInc(implicit session:Session) = count ~ total ~ meetingId returning id into {
-      //Hrm, how does this work?
-      case (_,id) => id
+    val autoInc = count ~ total ~ meetingId returning id into {
+      case (values, id) => SurveyResult(values._1, values._2, values._3, id)
     }
 
-    def insert(sr:SurveyResult)(implicit session:Session) : SurveyResult = {
-      val id = autoInc.insert(sr.count, sr.total, sr.meetingId)
-      sr.copy(id = id)
+    def insert(sr: SurveyResult)(implicit session: Session): SurveyResult = {
+      autoInc.insert(sr.count, sr.total, sr.meetingId)
     }
   }
+
 }
 
 //This Data Access Layer contains all components and a profile
 class DAL(override val profile: ExtendedProfile) extends MeetingComponent with SurveyResultComponent with Profile {
+
   import profile.simple._
-  def create(implicit session:Session):Unit = {
+
+  def create(implicit session: Session): Unit = {
     //This sets up the tables, I want to use flyway, or liquibase instead later...
     //(Meetings.ddl ++ SurveyResults.ddl).createStatements.toList.map(println(_))
     (Meetings.ddl ++ SurveyResults.ddl).create
@@ -89,7 +90,7 @@ class DAL(override val profile: ExtendedProfile) extends MeetingComponent with S
    * Just a handy method to drop the tables, mostly for testing
    * @param session
    */
-  def drop(implicit session:Session):Unit = {
+  def drop(implicit session: Session): Unit = {
     (Meetings.ddl ++ SurveyResults.ddl).drop
   }
 }
