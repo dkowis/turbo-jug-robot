@@ -29,8 +29,13 @@ trait JugService extends HttpService {
     meetingId =>
       path("survey") {
         post {
-          complete {
-            "updating survey responses"
+          entity(as[String]) {
+            answersJson =>
+              complete {
+                val answers = (answersJson asJson).convertTo[SurveyAnswers]
+                meetingsHandler.updateResults(meetingId, answers)
+                StatusCodes.OK
+              }
           }
         } ~
           get {

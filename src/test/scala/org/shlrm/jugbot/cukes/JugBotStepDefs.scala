@@ -99,8 +99,8 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
         implicit session: Session =>
           import dal._
           //Delete ALL! ERMAGHERDS
-          Query(Meetings).delete
           Query(SurveyResults).delete
+          Query(Meetings).delete
       }
     }
   }
@@ -158,7 +158,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
       receivedJson should be(requiredJson)
   }
 
-  When( """^I POST to the default meeting's ID:$""") {
+  When( """^I POST to the default meeting's ID's survey:$""") {
     (payload: String) =>
       def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey").
         setHeader("content-type", "application/json").
