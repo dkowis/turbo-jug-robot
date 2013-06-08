@@ -46,3 +46,18 @@ Feature: JSON survey information
          "title": "test meeting"
       }
     """
+
+  Scenario: Update Survey Answers
+    Given the database is empty
+    And the default meeting exists
+    When I POST to the default meeting's ID:
+    """
+    {
+      "q1": 0,
+      "q2": 0,
+    }
+    """
+    Then the response status is 200 "OK"
+    And the backend contains a survey result for the default meeting:
+      | Count | Sum |
+      | 1     | 0   |

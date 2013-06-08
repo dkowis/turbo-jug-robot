@@ -51,7 +51,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
-      def builtRequest = service.setUrl(server + path).
+      def builtRequest = url(server + path).
         setBody(rawJson).POST
       val request = Http(builtRequest)
       response = request()
@@ -113,7 +113,6 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
         implicit session: Session =>
           import dal._
           defaultMeeting = Meetings.insert(Meeting("test meeting", Date.valueOf("2013-02-17")))
-
       }
     }
   }
@@ -121,7 +120,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     (path: String) => {
       //Yay this works
       //Now lets do some database stuff
-      def builtRequest = service.setUrl(server + path).
+      def builtRequest = url(server + path).
         setHeader("accept", "application/json").
         GET
 
@@ -144,7 +143,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   When( """^I GET to the default meeting's ID$""") {
     () =>
     //TODO: probably no way to call a step from another step, like I used to
-      //Sweet jesus, dispatch is painful to use...
+    //Sweet jesus, dispatch is painful to use...
       def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString)
       val request = Http(builtRequest)
       response = request()
@@ -157,6 +156,40 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
       val receivedJson = response.getResponseBody.asJson
 
       receivedJson should be(requiredJson)
+  }
+
+  When( """^I POST to the default meeting's ID:$""") {
+    (payload: String) =>
+      def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey").
+        setHeader("content-type", "application/json").
+        setBody(payload).
+        POST
+
+      val request = Http(builtRequest)
+      response = request()
+  }
+
+  Then( """^the backend contains a survey result for the default meeting:$""") {
+    (dt: DataTable) => {
+      import scala.collection.JavaConversions._
+      val resultsMap = dt.asMaps().toList
+      import dal.profile.simple._
+      db withSession {
+        implicit session: Session =>
+          import dal._
+          val result = Query(SurveyResults).filter(_.meetingId === defaultMeeting.id.get).first
+          resultsMap.map( map => {
+            //Each row is a map: Date and Title
+            val count = map("Count").toInt
+            val total = map("Total").toInt
+
+            //Ensure we have only one of this combination in the list
+            result.count should be(count)
+            result.total should be(total)
+          })
+
+      }
+    }
   }
 
 }
