@@ -14,7 +14,6 @@ import com.ning.http.client.Response
 class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
   import spray.json._
-  import DefaultJsonProtocol._
 
   val server = "http://localhost:8080"
   val service = host("localhost", 8080)
@@ -29,7 +28,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
 
   //OH NOES MUTABLE!
-  var insertedMeeting: Meeting = null
+  var defaultMeeting: Meeting = null
   var response: Response = null
 
   /**
@@ -83,9 +82,9 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
             val date = Date.valueOf(map("Date"))
 
             //Ensure we have only one of this combination in the list
-            meetings.filter(m => {
+            meetings.count(m => {
               m.title == title && m.date == date
-            }).length should be(1)
+            }) should be(1)
           })
 
       }
@@ -113,7 +112,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
       db withSession {
         implicit session: Session =>
           import dal._
-          insertedMeeting = Meetings.insert(Meeting("test meeting", Date.valueOf("2013-02-17")))
+          defaultMeeting = Meetings.insert(Meeting("test meeting", Date.valueOf("2013-02-17")))
 
       }
     }
@@ -133,13 +132,29 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   Then( """^I recieve a list containing my meeting:$""") {
     (rawJson: String) => {
       //Mutilate the rawJson, to replace magic stuff
-      val parsed = rawJson.replaceAll("\\$meeting\\.id", insertedMeeting.id.get.toString)
+      val parsed = rawJson.replaceAll("\\$meeting\\.id", defaultMeeting.id.get.toString)
       response.getContentType should startWith("application/json") //Good enough!
       //TODO: match up the output of the call with the raw JSON
       val requiredJson = parsed.asJson
       val receivedJson = response.getResponseBody.asJson
       receivedJson should be(requiredJson)
     }
+  }
+
+  When( """^I GET to the default meeting's ID$""") {
+    () =>
+    //TODO: probably no way to call a step from another step, like I used to
+      val builder = service.setUrl(server + "/meetings/" + defaultMeeting.id.get).setHeader("accept", "application/json").GET
+      def request = Http(builder)
+      response = request()
+  }
+  Then( """^I receive a JSON representation of the meeting:$""") {
+    (arg0: String) =>
+      val parsed = arg0.replaceAll("\\$meeting\\.id", defaultMeeting.id.get.toString)
+      val requiredJson = parsed.asJson
+      val receivedJson = response.getResponseBody.asJson
+
+      receivedJson should be(requiredJson)
   }
 
 }

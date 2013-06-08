@@ -33,3 +33,16 @@ Feature: JSON survey information
     }
   ]
   """
+
+  Scenario: Get a single meeting
+    Given the database is empty
+    And the default meeting exists
+    When I GET to the default meeting's ID
+    Then I receive a JSON representation of the meeting:
+    """
+      {
+         "id": $meeting.id,
+         "date": "2013-02-17",
+         "title": "test meeting"
+      }
+    """

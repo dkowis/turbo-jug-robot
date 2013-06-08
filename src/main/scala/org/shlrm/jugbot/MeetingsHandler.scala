@@ -26,7 +26,7 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
   def listMeetings: List[Meeting] = {
     db withSession {
       implicit session: Session => {
-        log.debug("Querying database!")
+        log.debug("Getting list of meetings!")
         Query(Meetings).list.toList
       }
     }

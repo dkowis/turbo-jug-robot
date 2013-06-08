@@ -49,7 +49,7 @@ trait JugService extends HttpService {
         }
       }
   } ~
-    pathPrefix("meetings" / JavaUUID) {
+    pathPrefix("meetings" / IntNumber) {
       meetingId =>
         path("") {
           get {

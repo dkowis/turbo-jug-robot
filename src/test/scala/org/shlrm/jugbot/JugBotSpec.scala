@@ -36,9 +36,9 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
           }
         }
 
-        it("handles a get to /meetings/:uuid") {
-          val uuid = UUID.randomUUID()
-          Get(s"/meetings/${uuid}") ~> jugBot ~> check {
+        it("handles a get to /meetings/:id") {
+          val id = 1
+          Get(s"/meetings/${id}") ~> jugBot ~> check {
             handled should be (true)
           }
         }
