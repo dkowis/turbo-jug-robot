@@ -27,9 +27,11 @@ I'll update this stuff with that functionality.
 ## Tech Notes
 SBT Plugins:
  * [Javascript/coffeescript compilation](https://github.com/untyped/sbt-plugins/tree/master/sbt-js)
- * [Spray.io](http://spray.io) Specifically, spray-can, spray-routing, and the testkit.
  * [Less/Css Compilation](https://github.com/softprops/less-sbt)
  * [IDEA project generation](https://github.com/mpeltonen/sbt-idea)
+
+Libraries:
+ * [Spray.io](http://spray.io) Specifically, spray-can, spray-routing, and the testkit.
  * [spray-json](https://github.com/spray/spray-json)
  * [Slick](http://slick.typesafe.com/). This is a particularly awesome database access library. **NOT** an ORM.
- 
+
