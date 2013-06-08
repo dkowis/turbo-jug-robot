@@ -15,8 +15,6 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   val service = host("localhost", 8080)
 
   val config = ConfigFactory.load().getConfig("integrationTest")
-  println(s"Using database: ${config.getConfig("db")}")
-
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
