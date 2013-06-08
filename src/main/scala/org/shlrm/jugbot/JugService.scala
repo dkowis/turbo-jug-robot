@@ -30,19 +30,19 @@ trait JugService extends HttpService {
       path("survey") {
         post {
           complete {
-            "meeting survey"
+            "updating survey responses"
           }
-        }~
-        get {
-          complete {
-            "survey details"
+        } ~
+          get {
+            complete {
+              "survey details"
+            }
           }
-        }
       } ~
         path("") {
           get {
             complete {
-              "Meeting details"
+              meetingsHandler.getMeeting(meetingId)
             }
           }
         }

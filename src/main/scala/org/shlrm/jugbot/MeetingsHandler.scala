@@ -32,6 +32,15 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
     }
   }
 
+  def getMeeting(meetingId:Int):Meeting = {
+    db withSession {
+      implicit session: Session => {
+        log.debug("Getting a meeting!")
+        Query(Meetings).filter( _.id === meetingId).first
+      }
+    }
+  }
+
   def createMeeting(meeting: Meeting) = {
     db withSession {
       implicit session: Session => {
