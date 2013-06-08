@@ -9,10 +9,8 @@ Feature: JSON survey information
     When I POST the JSON to "/meetings":
     """
   {
-     "meeting": {
-         "date": "2013-05-30",
-         "title": "A test meeting"
-     }
+     "date": "2013-05-30",
+     "title": "A test meeting"
   }
   """
     Then the response status is 204 "CREATED"

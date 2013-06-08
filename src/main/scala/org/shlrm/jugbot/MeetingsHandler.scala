@@ -1,6 +1,6 @@
 package org.shlrm.jugbot
 
-import org.shlrm.jugbot.slick.{DAL, Meeting}
+import org.shlrm.jugbot.slick.DAL
 import com.typesafe.config.Config
 import scala.slick.driver.H2Driver
 import scala.slick.session.Database

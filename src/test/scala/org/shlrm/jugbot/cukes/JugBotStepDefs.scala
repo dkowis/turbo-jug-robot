@@ -139,6 +139,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     (rawJson: String) => {
       //Mutilate the rawJson, to replace magic stuff
       val parsed = rawJson.replaceAll("\\$meeting\\.id", insertedMeeting.id.get.toString)
+      response.getContentType should be("application/json")
       //TODO: match up the output of the call with the raw JSON
       val requiredJson = parsed.asJson
       val receivedJson = body.asJson
