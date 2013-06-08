@@ -37,6 +37,7 @@ SBT Plugins:
  * [Javascript/coffeescript compilation](https://github.com/untyped/sbt-plugins/tree/master/sbt-js)
  * [Less/Css Compilation](https://github.com/softprops/less-sbt)
  * [IDEA project generation](https://github.com/mpeltonen/sbt-idea)
+ * [sbt-revolver](https://github.com/spray/sbt-revolver)
 
 Libraries:
  * [Spray.io](http://spray.io) Specifically, spray-can, spray-routing, and the testkit.
