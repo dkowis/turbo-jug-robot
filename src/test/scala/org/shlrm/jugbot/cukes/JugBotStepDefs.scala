@@ -89,9 +89,6 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
           })
 
       }
-
-      // Express the Regexp above with the code you wish you had
-      throw new PendingException()
     }
   }
 

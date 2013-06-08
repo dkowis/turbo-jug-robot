@@ -34,7 +34,7 @@ trait JugService extends HttpService {
           respondWithStatus(StatusCodes.Created) {
             complete {
               val meeting = (data asJson).convertTo[Meeting]
-              ""
+              meetingsHandler.createMeeting(meeting)
             }
           }
         }

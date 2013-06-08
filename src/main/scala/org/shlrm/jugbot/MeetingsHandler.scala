@@ -31,15 +31,26 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
       }
     }
   }
+
+  def createMeeting(meeting: Meeting) = {
+    db withSession {
+      implicit session: Session => {
+        log.debug("Inserting a meeting!")
+        Meetings.insert(meeting)
+      }
+    }
+  }
 }
 
 object MeetingsJsonProtocol extends DefaultJsonProtocol {
+
   //TODO: handle properly parsing the date
 
   implicit object SqlDateJsonFormat extends RootJsonFormat[Date] {
-    def write(d:Date) = {
+    def write(d: Date) = {
       JsString(d.toString())
     }
+
     def read(value: JsValue) = value match {
       case JsString(dateString) => Date.valueOf(dateString) //Probably not the right way to do this
       case _ => throw new DeserializationException("Date Expected")
