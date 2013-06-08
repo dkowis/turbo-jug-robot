@@ -81,6 +81,7 @@ class DAL(override val profile: ExtendedProfile) extends MeetingComponent with S
   import profile.simple._
   def create(implicit session:Session):Unit = {
     //This sets up the tables, I want to use flyway, or liquibase instead later...
+    //(Meetings.ddl ++ SurveyResults.ddl).createStatements.toList.map(println(_))
     (Meetings.ddl ++ SurveyResults.ddl).create
   }
 

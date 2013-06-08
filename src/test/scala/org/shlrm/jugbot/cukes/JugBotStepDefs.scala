@@ -7,12 +7,14 @@ import scala.slick.driver.H2Driver
 import org.shlrm.jugbot.slick.{Meeting, DAL}
 import scala.slick.session.Database
 import java.sql.Date
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.ShouldMatchersForJUnit
+import com.typesafe.config.ConfigFactory
 
 class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   val server = "http://localhost:8080"
   val service = host("localhost", 8080)
+
+  val config = ConfigFactory.load().getConfig("integrationTest")
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
@@ -29,12 +31,11 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     () => {
       //Put a default meeting into the database
       val dal = new DAL(H2Driver)
-      val db = Database.forURL("jdbc:h2:mem:jugbot1", driver = "org.h2.Driver") //TODO: this might have to be a file backed db
+      val db = Database.forURL(config.getString("db.url"), driver = config.getString("db.driver"))
       import dal.profile.simple._
       db withSession {
         implicit session: Session =>
         //TODO: need to do flyway or something to make sure this exists first
-          dal.create
 
           import dal._
           Meetings.insert(Meeting("TEST MEETING", Date.valueOf("2013-02-17")))
@@ -43,9 +44,11 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   }
   When( """^I GET to "([^"]*)"$""") {
     (path: String) => {
+      println(s"PATH: ${path}")
       //Yay this works
       //Now lets do some database stuff
-      def builtRequest = (service / path).GET
+
+      def builtRequest = (service / "meetings").GET
       val request = Http(builtRequest)
       val response = request()
       response.getStatusCode() should be(200)
