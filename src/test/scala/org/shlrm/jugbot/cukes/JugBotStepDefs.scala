@@ -9,6 +9,7 @@ import scala.slick.session.Database
 import java.sql.Date
 import org.scalatest.junit.ShouldMatchersForJUnit
 import com.typesafe.config.ConfigFactory
+import com.ning.http.client.Response
 
 class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
@@ -30,6 +31,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
   //OH NOES MUTABLE!
   var body = ""
   var insertedMeeting: Meeting = null
+  var response: Response = null
 
   /**
    * I'm doing this part wrong, I'm not sure how to create a function to wrap stuff the way I want.
@@ -51,15 +53,49 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
-    //TODO: need to split up the path!
-    //Make a POST to the path, sending the JSON
-      throw new PendingException()
+      def builtRequest = service.setUrl(server + path).
+        setBody(rawJson).POST
+      val request = Http(builtRequest)
+      response = request()
   }
-  Then( """^the result should be (\d+) OK$""") {
-    (arg0: Int) =>
-    //TODO: check the result of the call
-      throw new PendingException()
+  Then( """^the result should be (\d+) $""") {
+    (arg0: Int) => {
+    }
   }
+
+  Then( """^the response status is (\d+) "([^"]*)"$""") {
+    (code: Int, codeText: String) =>
+      response.getStatusCode should be(code)
+  }
+
+  Then( """^the backend contains a? ?meetings?:$""") {
+    (dt: DataTable) => {
+      import scala.collection.JavaConversions._
+      val tableMap = dt.asMaps().toList
+      import dal.profile.simple._
+      db withSession {
+        implicit session: Session =>
+          import dal._
+          val meetings = Query(Meetings).list.toList
+          meetings.length should be(tableMap.length)
+          tableMap.map( map => {
+            //Each row is a map: Date and Title
+            val title = map("Title")
+            val date = Date.valueOf(map("Date"))
+
+            //Ensure we have only one of this combination in the list
+            meetings.filter( m => {
+              m.title == title && m.date == date
+            }).length should be(1)
+          })
+
+      }
+
+      // Express the Regexp above with the code you wish you had
+      throw new PendingException()
+    }
+  }
+
 
   Given( """^the database is empty$""") {
     () => {

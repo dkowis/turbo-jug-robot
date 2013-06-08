@@ -4,20 +4,21 @@ Feature: JSON survey information
   I need to be able to pull the results of that survey.
   I Need to be able to get a list of meetings, so that I know what meetings are available.
 
-  TODO: the server needs to be running!!!
-
-
   Scenario: Create a meeting
+    Given the database is empty
     When I POST the JSON to "/meetings":
     """
   {
      "meeting": {
-         "date": "2013-05-30 17:33:54 -0500",
+         "date": "2013-05-30",
          "title": "A test meeting"
      }
   }
   """
-    Then the result should be 200 OK
+    Then the response status is 204 "CREATED"
+    And the backend contains a meeting:
+      | Date       | Title          |
+      | 2013-05-30 | A test meeting |
 
 
   Scenario: Get a list of meetings
