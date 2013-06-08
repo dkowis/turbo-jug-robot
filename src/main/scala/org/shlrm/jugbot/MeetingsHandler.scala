@@ -61,7 +61,7 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
           SurveyResults.insert(SurveyResult(count = 1, total = answers.q1 + answers.q2, meetingId = meetingId))
         } else {
           //Update the row
-          val q = for {sr <- SurveyResults if sr.meetingId === meetingId} yield (sr.count, sr.total)
+          val q = for {sr <- SurveyResults if sr.meetingId === meetingId} yield (sr.count, sr.total, sr.id)
           q.mutate { r =>
             r.row = r.row.copy(_1 = r.row._1 + 1, _2 = r.row._2 + answers.q1 + answers.q2)
           }

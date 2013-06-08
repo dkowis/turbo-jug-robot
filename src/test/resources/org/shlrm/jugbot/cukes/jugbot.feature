@@ -61,3 +61,26 @@ Feature: JSON survey information
     And the backend contains a survey result for the default meeting:
       | Count | Total |
       | 1     | 0     |
+
+  Scenario: Multiple survey answers
+    Given the database is empty
+    And the default meeting exists
+    When I POST to the default meeting's ID's survey:
+    """
+    {
+      "q1": 2,
+      "q2": 2
+    }
+    """
+    Then the response status is 200 "OK"
+    When I POST to the default meeting's ID's survey:
+    """
+    {
+      "q1": -2,
+      "q2": -2
+    }
+    """
+    Then the response status is 200 "OK"
+    And the backend contains a survey result for the default meeting:
+      | Count | Total |
+      | 2     | 0     |
