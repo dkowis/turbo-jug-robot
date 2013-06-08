@@ -23,6 +23,14 @@ Then, you can run the Cucumber Tests from within your browser using Junit. once 
 [cucumber sbt plugin](https://github.com/skipoleschris/xsbt-cucumber-plugin) gets [fixed](https://github.com/skipoleschris/xsbt-cucumber-plugin/issues/27)
 I'll update this stuff with that functionality.
 
+## Auto-reloading Integration test Application
+JRebel is some pretty hot stuff. What's also hot stuff is the [sbt-revolver](https://github.com/spray/sbt-revolver) plugin that can use
+JRebel to automagically update your running application. Fantastic.
+
+It requires a license from JRebel, but that's [free to get for scala stuff](https://github.com/spray/sbt-revolver#jrebel).
+
+I've integrated that stuff into the app, so you can simply run `re-start` See the [directions here](https://github.com/spray/sbt-revolver#hot-reloading)
+
 
 ## Tech Notes
 SBT Plugins:
@@ -38,4 +46,3 @@ Libraries:
 Testing stuff:
  * [Cucumber-jvm](https://github.com/cucumber/cucumber-jvm)
  * [ScalaTest](http://www.scalatest.org/) Specifically the FunSpec style. Love it!
- 

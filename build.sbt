@@ -53,3 +53,9 @@ seq(jsSettings : _*)
 seq(cucumberSettings : _*)
 
 cucumberStepsBasePackage := "org.shlrm.jugbot.cukes"
+
+//Jrebel hot reloading!
+seq(Revolver.settings: _*)
+
+//Define the class we want to reload all the time
+mainClass in Revolver.reStart := Some("org.shlrm.jugbot.IntegrationMain")
