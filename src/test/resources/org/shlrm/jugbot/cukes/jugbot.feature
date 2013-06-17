@@ -57,9 +57,9 @@ Feature: JSON survey information
     }
     """
     Then the response status is 200 "OK"
-    And the backend contains a survey result for the default meeting:
-      | Count | Total |
-      | 1     | 0     |
+    And the backend contains a surveyResult for the default meeting:
+      | q1 | q2 |
+      | 0  | 0  |
 
   Scenario: Multiple survey answers
     Given the database is empty
@@ -81,8 +81,9 @@ Feature: JSON survey information
     """
     Then the response status is 200 "OK"
     And the backend contains a survey result for the default meeting:
-      | Count | Total |
-      | 2     | 0     |
+      | q1 | q2 |
+      | 2  | 2  |
+      | -2 | -2 |
 
   @wip
   Scenario: get Survey Answers for a meeting
@@ -99,18 +100,21 @@ Feature: JSON survey information
     [
      {
       "id": 1,
-      "q1": 2,
-      "q2": 2
+      "meetingId": $meeting.id,
+      "answer1": 2,
+      "answer2": 2
      },
      {
       "id":2,
-      "q1": 0,
-      "q2": 0
+      "meetingId": $meeting.id,
+      "answer1": 0,
+      "answer2": 0
      },
      {
       "id": 3,
-      "q1": -1,
-      "q2": -1
+      "meetingId": $meeting.id,
+      "answer1": -1,
+      "answer2": -1
      }
     ]
     """

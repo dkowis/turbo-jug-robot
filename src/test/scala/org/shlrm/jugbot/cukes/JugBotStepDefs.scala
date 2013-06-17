@@ -4,7 +4,7 @@ import cucumber.api.scala.{EN, ScalaDsl}
 import cucumber.api.{DataTable, PendingException}
 import dispatch._, Defaults._
 import scala.slick.driver.H2Driver
-import org.shlrm.jugbot.slick.{Meeting, DAL}
+import org.shlrm.jugbot.slick.{SurveyResponse, Meeting, DAL}
 import scala.slick.session.Database
 import java.sql.Date
 import org.scalatest.junit.ShouldMatchersForJUnit
@@ -49,7 +49,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     }
   }
 
-  def postDefaultSurveyResults(a1:Int, a2:Int) = {
+  def postDefaultSurveyResults(a1: Int, a2: Int) = {
     val payload =
       s"""
         |{
@@ -116,7 +116,7 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
         implicit session: Session =>
           import dal._
           //Delete ALL! ERMAGHERDS
-          Query(SurveyResults).delete
+          Query(SurveyResponses).delete
           Query(Meetings).delete
       }
     }
@@ -186,55 +186,50 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
       response = request()
   }
 
-  Then( """^the backend contains a survey result for the default meeting:$""") {
-    (dt: DataTable) => {
+  When( """^I POST some survey results to the default meeting ID:$""") {
+    (results: DataTable) =>
       import scala.collection.JavaConversions._
-      val resultsMap = dt.asMaps().toList
-      import dal.profile.simple._
-      db withSession {
-        implicit session: Session =>
-          import dal._
-          val result = Query(SurveyResults).filter(_.meetingId === defaultMeeting.id.get).first
-          resultsMap.map( map => {
-            //Each row is a map: Date and Title
-            val count = map("Count").toInt
-            val total = map("Total").toInt
+      val answersMap = results.asMaps().toList
+      answersMap.map(map => {
+        val a1 = map("Q1").toInt
+        val a2 = map("Q2").toInt
 
-            //Ensure we have only one of this combination in the list
-            result.count should be(count)
-            result.total should be(total)
-          })
-
-      }
-    }
+        postDefaultSurveyResults(a1, a2)
+        response.getStatusCode should be(200)
+      })
   }
-
-  When("""^I POST some survey results to the default meeting ID:$"""){ (results:DataTable) =>
-    import scala.collection.JavaConversions._
-    val answersMap = results.asMaps().toList
-    answersMap.map( map => {
-      val a1 = map("Q1").toInt
-      val a2 = map("Q2").toInt
-
-      postDefaultSurveyResults(a1, a2)
+  When( """^I GET to the default meeting's survey$""") {
+    () =>
+      def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey")
+      val request = Http(builtRequest)
+      response = request()
       response.getStatusCode should be(200)
-    })
-  }
-  When("""^I GET to the default meeting's survey$"""){ () =>
-    def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey")
-    val request = Http(builtRequest)
-    response = request()
-    response.getStatusCode should be(200)
   }
 
-  Then("""^I receive a JSON representation of the meeting results:$"""){ (payload:String) =>
-    val requiredJson = payload.asJson
-    //TODO: convert the IDs? or ignore those checks
-    val receivedJson = response.getResponseBody.asJson
+  Then( """^I receive a JSON representation of the meeting results:$""") {
+    (payload: String) => {
+      val parsed = payload.replaceAll("\\$meeting\\.id", defaultMeeting.id.get.toString)
 
-    receivedJson should be(requiredJson)
-    //// Express the Regexp above with the code you wish you had
-    throw new PendingException()
+      val requiredJson = parsed.asJson
+      //TODO: convert the IDs? or ignore those checks
+      val receivedJson = response.getResponseBody.asJson
+
+      object SurveyResponseProtocol extends DefaultJsonProtocol {
+        implicit val surveyResponseJson = jsonFormat4(SurveyResponse)
+      }
+      import SurveyResponseProtocol._
+
+      //Cant quite just simply compare the two things...
+      val surveyResponses = receivedJson.convertTo[List[SurveyResponse]]
+
+      val requiredResponses = requiredJson.convertTo[List[SurveyResponse]]
+
+      requiredResponses.map(req => {
+        surveyResponses.filter(i => {
+          i.answer1 == req.answer1 && i.answer2 == req.answer2 && i.meetingId == req.meetingId
+        }).length should be(1)
+      })
+    }
   }
 
 }

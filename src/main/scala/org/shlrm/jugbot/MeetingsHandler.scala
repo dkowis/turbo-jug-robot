@@ -62,7 +62,12 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
   }
 
   def surveyResults(meetingId: Int):List[SurveyResponse] = {
-    ???
+    db withSession {
+      implicit session: Session => {
+        //just query out a list of survey Responses
+        Query(SurveyResponses).filter(_.meetingId === meetingId).list
+      }
+    }
   }
 }
 
