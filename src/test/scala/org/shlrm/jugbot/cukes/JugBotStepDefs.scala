@@ -49,6 +49,23 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
     }
   }
 
+  def postDefaultSurveyResults(a1:Int, a2:Int) = {
+    val payload =
+      s"""
+        |{
+        | "q1": ${a1},
+        | "q2": ${a2}
+        |}
+      """.stripMargin
+    def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey").
+      setHeader("content-type", "application/json").
+      setBody(payload).
+      POST
+
+    val request = Http(builtRequest)
+    response = request()
+  }
+
   When( """^I POST the JSON to "([^"]*)":$""") {
     (path: String, rawJson: String) =>
       def builtRequest = url(server + path).
@@ -190,6 +207,34 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
 
       }
     }
+  }
+
+  When("""^I POST some survey results to the default meeting ID:$"""){ (results:DataTable) =>
+    import scala.collection.JavaConversions._
+    val answersMap = results.asMaps().toList
+    answersMap.map( map => {
+      val a1 = map("Q1").toInt
+      val a2 = map("Q2").toInt
+
+      postDefaultSurveyResults(a1, a2)
+      response.getStatusCode should be(200)
+    })
+  }
+  When("""^I GET to the default meeting's survey$"""){ () =>
+    def builtRequest = url(server + "/meetings/" + defaultMeeting.id.get.toString + "/survey")
+    val request = Http(builtRequest)
+    response = request()
+    response.getStatusCode should be(200)
+  }
+
+  Then("""^I receive a JSON representation of the meeting results:$"""){ (payload:String) =>
+    val requiredJson = payload.asJson
+    //TODO: convert the IDs? or ignore those checks
+    val receivedJson = response.getResponseBody.asJson
+
+    receivedJson should be(requiredJson)
+    //// Express the Regexp above with the code you wish you had
+    throw new PendingException()
   }
 
 }

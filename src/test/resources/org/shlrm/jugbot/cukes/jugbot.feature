@@ -83,3 +83,35 @@ Feature: JSON survey information
     And the backend contains a survey result for the default meeting:
       | Count | Total |
       | 2     | 0     |
+
+  @wip
+  Scenario: get Survey Answers for a meeting
+    Given the database is empty
+    And the default meeting exists
+    When I POST some survey results to the default meeting ID:
+      | Q1 | Q2 |
+      | 2  | 2  |
+      | 0  | 0  |
+      | -1 | -1 |
+    When I GET to the default meeting's survey
+    Then I receive a JSON representation of the meeting results:
+    """
+    [
+     {
+      "id": 1,
+      "q1": 2,
+      "q2": 2
+     },
+     {
+      "id":2,
+      "q1": 0,
+      "q2": 0
+     },
+     {
+      "id": 3,
+      "q1": -1,
+      "q2": -1
+     }
+    ]
+    """
+
