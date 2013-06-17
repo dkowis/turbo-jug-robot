@@ -1,6 +1,6 @@
 package org.shlrm.jugbot
 
-import org.shlrm.jugbot.slick.{SurveyResult, DAL, Meeting}
+import org.shlrm.jugbot.slick.{SurveyResponse, DAL, Meeting}
 import com.typesafe.config.Config
 import scala.slick.driver.H2Driver
 import scala.slick.session.Database
@@ -51,23 +51,18 @@ class MeetingsHandler(implicit config: Config) extends SLF4JLogging {
     }
   }
 
-  def updateResults(meetingId: Int, answers: SurveyAnswers):Unit = {
+  def updateResults(meetingId: Int, answers: SurveyAnswers): Unit = {
     db withSession {
       implicit session: Session => {
-        //Query out and update the values for the survey results for that survey
-        val count = Query(SurveyResults).filter(_.meetingId === meetingId).list.length
-        if (count == 0) {
-          //Insert a new one
-          SurveyResults.insert(SurveyResult(count = 1, total = answers.q1 + answers.q2, meetingId = meetingId))
-        } else {
-          //Update the row
-          val q = for {sr <- SurveyResults if sr.meetingId === meetingId} yield (sr.count, sr.total, sr.id)
-          q.mutate { r =>
-            r.row = r.row.copy(_1 = r.row._1 + 1, _2 = r.row._2 + answers.q1 + answers.q2)
-          }
-        }
+        //Now just inserting another response into the database
+        val response = SurveyResponse(answers.q1, answers.q2, meetingId)
+        SurveyResponses.insert(response)
       }
     }
+  }
+
+  def surveyResults(meetingId: Int):List[SurveyResponse] = {
+    ???
   }
 }
 
@@ -88,4 +83,5 @@ object MeetingsJsonProtocol extends DefaultJsonProtocol {
 
   implicit val meetingFormat = jsonFormat3(Meeting)
   implicit val answersFormat = jsonFormat2(SurveyAnswers)
+  implicit val surveyResultsFormat = jsonFormat4(SurveyResponse)
 }

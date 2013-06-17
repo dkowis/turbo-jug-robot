@@ -44,46 +44,47 @@ trait MeetingComponent {
 
 }
 
-case class SurveyResult(count: Int, total: Int, meetingId: Int, id: Option[Int] = None)
+case class SurveyResponse(answer1: Int, answer2: Int, meetingId: Int, id: Option[Int] = None)
 
-trait SurveyResultComponent {
+trait SurveyResponsesComponent {
   this: Profile with MeetingComponent =>
 
   import profile.simple._
 
-  object SurveyResults extends Table[SurveyResult]("SURVEY_RESULTS") {
-    def id = column[Option[Int]]("SURVEY_RESULTS_ID", O.PrimaryKey, O.AutoInc)
+  object SurveyResponses extends Table[SurveyResponse]("SURVEY_RESPONSES") {
+    def id = column[Option[Int]]("SURVEY_RESPONSE_ID", O.PrimaryKey, O.AutoInc)
 
-    def count = column[Int]("COUNT", O.NotNull)
+    def answer1 = column[Int]("ANSWER_1", O.NotNull)
 
-    def total = column[Int]("TOTAL", O.NotNull)
+    def answer2 = column[Int]("ANSWER_2", O.NotNull)
 
     def meetingId = column[Int]("MEETING_ID", O.NotNull)
 
     def meeting = foreignKey("MEETING_FK", meetingId, Meetings)(_.id.get)
 
-    def * = count ~ total ~ meetingId ~ id <>(SurveyResult, SurveyResult.unapply _)
+    def * = answer1 ~ answer2 ~ meetingId ~ id <>(SurveyResponse, SurveyResponse.unapply _)
 
-    val autoInc = count ~ total ~ meetingId returning id into {
-      case (values, id) => SurveyResult(values._1, values._2, values._3, id)
+    val autoInc = answer1 ~ answer2 ~ meetingId returning id into {
+      case (values, id) => SurveyResponse(values._1, values._2, values._3, id)
     }
 
-    def insert(sr: SurveyResult)(implicit session: Session): SurveyResult = {
-      autoInc.insert(sr.count, sr.total, sr.meetingId)
+    def insert(sr: SurveyResponse)(implicit session: Session): SurveyResponse = {
+      autoInc.insert(sr.answer1, sr.answer2, sr.meetingId)
     }
   }
 
 }
 
+
 //This Data Access Layer contains all components and a profile
-class DAL(override val profile: ExtendedProfile) extends MeetingComponent with SurveyResultComponent with Profile {
+class DAL(override val profile: ExtendedProfile) extends MeetingComponent with SurveyResponsesComponent with Profile {
 
   import profile.simple._
 
   def create(implicit session: Session): Unit = {
     //This sets up the tables, I want to use flyway, or liquibase instead later...
     //(Meetings.ddl ++ SurveyResults.ddl).createStatements.toList.map(println(_))
-    (Meetings.ddl ++ SurveyResults.ddl).create
+    (Meetings.ddl ++ SurveyResponses.ddl).create
   }
 
   /**
@@ -91,6 +92,6 @@ class DAL(override val profile: ExtendedProfile) extends MeetingComponent with S
    * @param session
    */
   def drop(implicit session: Session): Unit = {
-    (Meetings.ddl ++ SurveyResults.ddl).drop
+    (Meetings.ddl ++ SurveyResponses.ddl).drop
   }
 }

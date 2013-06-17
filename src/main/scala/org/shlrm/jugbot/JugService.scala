@@ -40,7 +40,7 @@ trait JugService extends HttpService {
         } ~
           get {
             complete {
-              "survey details"
+              meetingsHandler.surveyResults(meetingId)
             }
           }
       } ~
