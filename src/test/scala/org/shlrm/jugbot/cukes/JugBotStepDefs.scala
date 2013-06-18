@@ -83,6 +83,31 @@ class JugBotStepDefs extends ScalaDsl with EN with ShouldMatchersForJUnit {
       response.getStatusCode should be(code)
   }
 
+  Then( """^the backend contains a? ?survey responses? for the default meeting:$""") {
+    (dt: DataTable) => {
+      import scala.collection.JavaConversions._
+      val tableMap = dt.asMaps().toList
+      import dal.profile.simple._
+      db withSession {
+        implicit session: Session => {
+          import dal._
+
+          val surveyResults = Query(SurveyResponses).filter(_.meetingId === defaultMeeting.id.get).list
+          surveyResults.length should be(tableMap.length)
+
+          //Go through and make sure all the requested ones are in the list
+          tableMap.map(map => {
+            val q1 = map("q1").toInt
+            val q2 = map("q2").toInt
+
+            surveyResults.filter( y => y.answer1 == q1 && y.answer2 == q2).length should be >= 1
+          })
+        }
+      }
+    }
+  }
+
+
   Then( """^the backend contains a? ?meetings?:$""") {
     (dt: DataTable) => {
       import scala.collection.JavaConversions._

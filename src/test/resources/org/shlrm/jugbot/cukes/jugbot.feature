@@ -57,7 +57,7 @@ Feature: JSON survey information
     }
     """
     Then the response status is 200 "OK"
-    And the backend contains a surveyResult for the default meeting:
+    And the backend contains a survey response for the default meeting:
       | q1 | q2 |
       | 0  | 0  |
 
@@ -80,7 +80,7 @@ Feature: JSON survey information
     }
     """
     Then the response status is 200 "OK"
-    And the backend contains a survey result for the default meeting:
+    And the backend contains survey responses for the default meeting:
       | q1 | q2 |
       | 2  | 2  |
       | -2 | -2 |
