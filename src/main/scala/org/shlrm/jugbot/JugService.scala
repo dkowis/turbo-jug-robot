@@ -17,13 +17,15 @@ import spray.httpx.marshalling.Marshaller
 trait JugService extends HttpService {
 
   import spray.json._
+  import spray.httpx.SprayJsonSupport._
+
   import MeetingsJsonProtocol._
 
-
   //Moving to the routed actor!
-  val meetingActor = actorRefFactory.actorOf(Props[MeetingActor].withRouter(RoundRobinRouter(nrOfInstances = 5)))
-  implicit val timeout = Timeout(10 seconds)
   implicit def executionContext = actorRefFactory.dispatcher
+  implicit val timeout = Timeout(10 seconds)
+
+  val meetingActor = actorRefFactory.actorOf(Props[MeetingActor].withRouter(RoundRobinRouter(nrOfInstances = 5)))
 
 
   //have to get this so that the thing can toJson stuff for me
