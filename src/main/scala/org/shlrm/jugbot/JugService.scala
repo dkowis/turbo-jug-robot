@@ -1,24 +1,30 @@
 package org.shlrm.jugbot
 
 import spray.routing.HttpService
-import com.typesafe.config.ConfigFactory
-import spray.http.{MediaTypes, StatusCodes, StatusCode}
-import org.shlrm.jugbot.slick.Meeting
+import spray.http._
+import org.shlrm.jugbot.slick.{SurveyResponse, Meeting}
 import MediaTypes._
-import akka.event.slf4j.SLF4JLogging
-import akka.event.LoggingAdapter
+import akka.routing.RoundRobinRouter
+import akka.actor.Props
+import org.shlrm.jugbot.MeetingProtocol._
+import akka.pattern.ask
+import akka.util.Timeout
+import scala.concurrent.duration._
+import reflect.ClassTag
+import scala.concurrent.Future
+import spray.httpx.marshalling.Marshaller
 
 trait JugService extends HttpService {
 
   import spray.json._
   import MeetingsJsonProtocol._
-  import SprayJsonSupport._
 
-  //Should include the default types...
 
-  implicit val config = ConfigFactory.load().getConfig("integrationTest") //TODO: get this from environment!
+  //Moving to the routed actor!
+  val meetingActor = actorRefFactory.actorOf(Props[MeetingActor].withRouter(RoundRobinRouter(nrOfInstances = 5)))
+  implicit val timeout = Timeout(10 seconds)
+  implicit def executionContext = actorRefFactory.dispatcher
 
-  val meetingsHandler = new MeetingsHandler
 
   //have to get this so that the thing can toJson stuff for me
   //import MeetingsJsonProtocol._
@@ -33,21 +39,22 @@ trait JugService extends HttpService {
             answersJson =>
               complete {
                 val answers = (answersJson asJson).convertTo[SurveyAnswers]
-                meetingsHandler.updateResults(meetingId, answers)
+                meetingActor ! UpdateResults(meetingId, answers)
                 StatusCodes.OK
               }
           }
         } ~
           get {
             complete {
-              meetingsHandler.surveyResults(meetingId)
+              val future = (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
+              implicitly[Marshaller[Future[List[SurveyResponse]]]]
             }
           }
       } ~
         path("") {
           get {
             complete {
-              meetingsHandler.getMeeting(meetingId)
+              meetingActor ! GetMeeting(meetingId)
             }
           }
         }
@@ -61,7 +68,7 @@ trait JugService extends HttpService {
             respondWithStatus(StatusCodes.Created) {
               complete {
                 val meeting = (data asJson).convertTo[Meeting]
-                meetingsHandler.createMeeting(meeting)
+                meetingActor ! CreateMeeting(meeting)
               }
             }
           }
@@ -71,7 +78,7 @@ trait JugService extends HttpService {
           //TODO: could probably do caching
           respondWithMediaType(`application/json`) {
             complete {
-              meetingsHandler.listMeetings
+              meetingActor ! ListMeetings()
             }
           }
         }
