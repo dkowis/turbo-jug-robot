@@ -46,8 +46,9 @@ trait JugService extends HttpService {
         } ~
           get {
             complete {
-              val future = (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
               implicitly[Marshaller[Future[List[SurveyResponse]]]]
+
+              (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
             }
           }
       } ~
