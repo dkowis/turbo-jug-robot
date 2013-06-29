@@ -13,7 +13,9 @@ class MeetingActor extends Actor with SprayActorLogging with AskSupport {
   lazy val ms = new MeetingsHandler()
 
   def receive = {
-    case ListMeetings => {
+    //CASE CLASS PARENS MURDER ME
+    case ListMeetings() => {
+     log.info("Goign to try to list meetings")
       sender ! ms.listMeetings
     }
     case GetMeeting(meetingId) => {
