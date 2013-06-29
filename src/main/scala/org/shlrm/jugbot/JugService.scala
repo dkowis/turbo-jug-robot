@@ -48,7 +48,7 @@ trait JugService extends HttpService {
         } ~
           get {
             complete {
-              implicitly[Marshaller[Future[List[SurveyResponse]]]]
+              //implicitly[Marshaller[Future[List[SurveyResponse]]]]
 
               (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
             }
@@ -57,7 +57,7 @@ trait JugService extends HttpService {
         path("") {
           get {
             complete {
-              meetingActor ! GetMeeting(meetingId)
+              (meetingActor ? GetMeeting(meetingId)).mapTo[Meeting]
             }
           }
         }
@@ -71,7 +71,7 @@ trait JugService extends HttpService {
             respondWithStatus(StatusCodes.Created) {
               complete {
                 val meeting = (data asJson).convertTo[Meeting]
-                meetingActor ! CreateMeeting(meeting)
+                (meetingActor ? CreateMeeting(meeting)).mapTo[Meeting]
               }
             }
           }
@@ -81,7 +81,7 @@ trait JugService extends HttpService {
           //TODO: could probably do caching
           respondWithMediaType(`application/json`) {
             complete {
-              meetingActor ! ListMeetings()
+              (meetingActor ? ListMeetings()).mapTo[List[Meeting]]
             }
           }
         }
