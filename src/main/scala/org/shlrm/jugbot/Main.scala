@@ -11,10 +11,11 @@ object Main extends App {
 
   implicit val system  = ActorSystem("turboJugRobot")
 
-  val service = system.actorOf(Props[JugServiceActor], "jug-service")
+  val config = ConfigFactory.load().getConfig("production")
 
-  //TODO: make environment variable stuff behave, or CLI Opts? Need a environment
-  val config = ConfigFactory.load().getConfig("integrationTest") //TODO: have to get that from environment
+  //Has to be new each time
+  val service = system.actorOf(Props(new JugServiceActor(config)), "jug-service")
+
   val flyway = new Flyway()
   flyway.setDataSource(config.getString("db.url"), config.getString("db.user"), config.getString("db.pass"))
   flyway.migrate()
