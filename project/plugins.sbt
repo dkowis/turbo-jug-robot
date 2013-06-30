@@ -16,3 +16,5 @@ addSbtPlugin("me.lessis" % "less-sbt" % "0.1.10")
 addSbtPlugin("templemore" % "sbt-cucumber-plugin" % "0.7.2")
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.6.2")
+
+addSbtPlugin("com.typesafe.startscript" % "xsbt-start-script-plugin" % "0.5.3")

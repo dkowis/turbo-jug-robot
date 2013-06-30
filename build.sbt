@@ -1,3 +1,6 @@
+import com.typesafe.startscript.StartScriptPlugin
+
+seq(StartScriptPlugin.startScriptForClassesSettings: _*)
 
 name := "turbo-jug-robot"
 
@@ -59,3 +62,6 @@ seq(Revolver.settings: _*)
 
 //Define the class we want to reload all the time
 mainClass in Revolver.reStart := Some("org.shlrm.jugbot.IntegrationMain")
+
+//Set the main class for normal execution
+mainClass in Compile := Some("org.shlrm.jugbot.Main")
