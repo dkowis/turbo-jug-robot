@@ -7,6 +7,8 @@ See the issues for current targeted feature sets :D
 
 Feel free to make pull requests, or add features to issues.
 
+[SATJUG Presentation](http://prezi.com/9s_v0cz8-4tk/introduction-to-sprayio-web-services/)
+
 ## Integration tests
 
 I've got cucumber features files in development, but I'm sure I'm not doing it perfectly right.
