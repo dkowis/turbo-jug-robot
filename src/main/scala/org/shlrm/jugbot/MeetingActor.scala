@@ -6,9 +6,10 @@ import com.typesafe.config.ConfigFactory
 import akka.pattern.AskSupport
 
 class MeetingActor extends Actor with SprayActorLogging with AskSupport {
-  implicit val config = ConfigFactory.load().getConfig("integrationTest") //TODO: get this from environment!
 
   import MeetingProtocol._
+
+  implicit val config = ConfigGetter.config(context.system)
 
   lazy val ms = new MeetingsHandler()
 

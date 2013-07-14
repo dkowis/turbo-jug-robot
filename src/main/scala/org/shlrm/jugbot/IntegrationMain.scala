@@ -14,10 +14,14 @@ import akka.io.IO
  */
 object IntegrationMain extends App {
 
-  //Grab the configuration
-  val config = ConfigFactory.load().getConfig("integrationTest")
-
   implicit val system = ActorSystem("turboJugRobotIntegration")
+
+  //Create a config actor for integration testing
+  val environment = "integrationTest"
+  val configActor = system.actorOf(Props(new ConfigActor(environment)), "ConfigActor")
+
+  //Grab the configuration
+  val config = ConfigGetter.config(system)
 
   //Start up an in-memory database that has a TCP connection available.
   //This way, my integration tests can also talk to it
@@ -33,7 +37,7 @@ object IntegrationMain extends App {
   flyway.migrate()
 
   //create a new http server using our handler and tell it what to bind to
-  val service = system.actorOf(Props(new JugServiceActor(config)), "jug-service")
+  val service = system.actorOf(Props(new JugServiceActor), "jug-service")
 
   IO(Http) ! Http.Bind(service, interface = "localhost", port = 8080)
   //Not sure what to do on death?

@@ -20,6 +20,7 @@ trait JugService extends HttpService {
 
   //Moving to the routed actor!
   implicit def executionContext = actorRefFactory.dispatcher
+
   implicit val timeout = Timeout(10 seconds)
 
   val meetingActor = actorRefFactory.actorOf(Props[MeetingActor].withRouter(RoundRobinRouter(nrOfInstances = 5)))
