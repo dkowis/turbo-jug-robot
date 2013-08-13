@@ -38,21 +38,6 @@ resolvers ++= Seq( "snapshots" at "http://oss.sonatype.org/content/repositories/
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
-//Adds stuff for the less-sbt compiler
-seq(lessSettings:_*)
-
-//Adds stuff for the sbt compilation of javascript and coffeescript
-seq(jsSettings : _*)
-
-//Make it compile our javascript on compile
-(resourceGenerators in Compile) <+= (JsKeys.js in Compile)
-
-//Cannot rename variables and have dependency injection still work with Angular.js
-(JsKeys.variableRenamingPolicy in (Compile)) := VariableRenamingPolicy.OFF
-
-//Have the javascript task run automatically
-(compile in Compile) <<= compile in Compile dependsOn (JsKeys.js in Compile)
-
 //Add the cucumber stuff!
 seq(cucumberSettings : _*)
 
