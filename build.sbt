@@ -31,3 +31,13 @@ mainClass in Revolver.reStart := Some("org.shlrm.jugbot.IntegrationMain")
 
 //Set the main class for normal execution
 mainClass in Compile := Some("org.shlrm.jugbot.Main")
+
+//Adding scalac options so I can see things, Targeting JDK 1.6
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-Xlint",
+  "-language:_",
+  "-target:jvm-1.6",
+  "-encoding", "UTF-8"
+)

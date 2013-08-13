@@ -21,7 +21,7 @@ class JugBotSpec extends FunSpec with ScalatestRouteTest with ShouldMatchers wit
       }
     }
     it("returns one of the images") {
-      Get("/images/glyphicons-halflings.png") ~> jugBot ~> check {
+      Get("/web/images/glyphicons-halflings.png") ~> jugBot ~> check {
         handled should be(true)
       }
     }

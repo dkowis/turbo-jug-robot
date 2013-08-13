@@ -88,9 +88,10 @@ trait JugService extends HttpService {
       getFromResourceDirectory("images")
     } ~
     path("backend") {
-      getFromResource("backend.html")
+      getFromResource("web/backend.html")
     } ~
     path("") {
+      //TODO: redo this to serve from the web package...
       //Primary resource, has to be at the bottom
       getFromResource("mainPage.html")
     }
