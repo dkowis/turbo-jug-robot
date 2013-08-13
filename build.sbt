@@ -14,6 +14,7 @@ libraryDependencies ++= Seq (
     "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
     "io.spray" % "spray-testkit" % "1.1-M8" % "test",
     "com.googlecode.flyway" % "flyway-core" % "2.1.1",
+    "com.typesafe" % "config" % "1.0.2",
     //Adding JSON support using spray-json
     "io.spray" %%  "spray-json" % "1.2.5",
     "io.spray" % "spray-can" % "1.1-M8",
