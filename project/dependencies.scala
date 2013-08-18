@@ -5,7 +5,8 @@ object Library {
   //versions
   val sprayVersion = "1.1-M8"
   val akkaVersion = "2.1.4"
-  val cucumberVersion = "1.1.3"
+  val cucumberVersion = "1.1.4"
+  val cucumberScalaVersion = "1.1.3"
   val logbackVersion = "1.0.13"
   val sprayJsonVersion = "1.2.5"
   val dispatchVersion = "0.10.1"
@@ -15,13 +16,15 @@ object Library {
   val postgresqlVersion = "9.1-901.jdbc4"
   val slickVersion = "1.0.1-RC1"
   val h2Version = "1.3.166"
+  val junitInterfaceVersion = "0.10"
 
   //testing dependencies
   val dispatch = "net.databinder.dispatch" %% "dispatch-core" % dispatchVersion
   val scalaTest = "org.scalatest" % "scalatest_2.10" % scalaTestVersion
   val sprayTestkit = "io.spray" % "spray-testkit" % sprayVersion
   val cucumberJunit = "info.cukes" % "cucumber-junit" % cucumberVersion
-  val cucumberScala = "info.cukes" % "cucumber-scala" % cucumberVersion
+  val cucumberScala = "info.cukes" % "cucumber-scala" % cucumberScalaVersion
+  val junitInterface = "com.novocode" % "junit-interface" % junitInterfaceVersion
 
   //Primary app depends
   val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
