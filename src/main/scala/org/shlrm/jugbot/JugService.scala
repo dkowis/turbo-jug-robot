@@ -29,70 +29,60 @@ trait JugService extends HttpService {
   //MAGIC SAUCE IS pathPrefix, to leave unmatched bits!
   //Stupid valuable google groups: https://groups.google.com/forum/#!msg/spray-user/3x9IkhM_W4Q/ckc9E6qOxgIJ
   // THANK YOU: https://github.com/ctcarrier/mycotrack-api/blob/master/src/main/scala/com/mycotrack/api/endpoint/WebAppEndpoint.scala
-  val jugBot = pathPrefix("meetings" / IntNumber) {
-    meetingId =>
-      path("survey") {
-        post {
-          entity(as[String]) {
-            answersJson =>
-              complete {
-                val answers = (answersJson asJson).convertTo[SurveyAnswers]
-                meetingActor ! UpdateResults(meetingId, answers)
-                StatusCodes.OK
+  val jugBot = userRoute ~ staticRoute
+
+  def userRoute =
+    pathPrefix("meetings" / IntNumber) {
+        meetingId =>
+          path("survey") {
+            post {
+              entity(as[String]) {
+                answersJson =>
+                  complete {
+                    val answers = (answersJson asJson).convertTo[SurveyAnswers]
+                    meetingActor ! UpdateResults(meetingId, answers)
+                    StatusCodes.OK
+                  }
               }
-          }
-        } ~
-          get {
-            complete {
-              (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
-            }
-          }
-      } ~
-        path("") {
-          get {
-            complete {
-              (meetingActor ? GetMeeting(meetingId)).mapTo[Meeting]
-            }
-          }
-        }
-  } ~
-    path("meetings") {
-      //TODO: wrap this in some kind of authenticated somehow
-      post {
-        entity(as[String]) {
-          data => {
-            respondWithStatus(StatusCodes.Created) {
-              complete {
-                val meeting = (data asJson).convertTo[Meeting]
-                (meetingActor ? CreateMeeting(meeting)).mapTo[Meeting]
+            } ~
+              get {
+                complete {
+                  (meetingActor ? SurveyResults(meetingId)).mapTo[List[SurveyResponse]]
+                }
+              }
+          } ~
+            path("") {
+              get {
+                complete {
+                  (meetingActor ? GetMeeting(meetingId)).mapTo[Meeting]
+                }
               }
             }
-          }
-        }
       } ~
-        get {
-          //TODO: could probably do caching
-          respondWithMediaType(`application/json`) {
-            complete {
-              (meetingActor ? ListMeetings()).mapTo[List[Meeting]]
+        path("meetings") {
+          //TODO: wrap this in some kind of authenticated somehow
+          post {
+            entity(as[String]) {
+              data => {
+                respondWithStatus(StatusCodes.Created) {
+                  complete {
+                    val meeting = (data asJson).convertTo[Meeting]
+                    (meetingActor ? CreateMeeting(meeting)).mapTo[Meeting]
+                  }
+                }
+              }
             }
-          }
+          } ~
+            get {
+              //TODO: could probably do caching
+              respondWithMediaType(`application/json`) {
+                complete {
+                  (meetingActor ? ListMeetings()).mapTo[List[Meeting]]
+                }
+              }
+            }
         }
-    } ~ pathPrefix("js") {
-    getFromResourceDirectory("javascripts") //this *should* get the javascripts from teh war file...
-  } ~
-    pathPrefix("stylesheets") {
-      getFromResourceDirectory("css")
-    } ~
-    pathPrefix("images") {
-      getFromResourceDirectory("images")
-    } ~
-    path("backend") {
-      getFromResource("web/backend.html")
-    } ~
-    path("") {
-      //TODO: redo this to serve from the web package...
-      //Primary resource, has to be at the bottom
-      getFromResource("mainPage.html")
-    }
+
+  def staticRoute =
+    path("")(getFromResource("web/index.html")) ~ getFromResourceDirectory("web")
 }
