@@ -6,7 +6,6 @@ object Library {
   val sprayVersion = "1.1-M8"
   val akkaVersion = "2.1.4"
   val cucumberVersion = "1.1.4"
-  val cucumberScalaVersion = "1.1.3"
   val logbackVersion = "1.0.13"
   val sprayJsonVersion = "1.2.5"
   val dispatchVersion = "0.10.1"
@@ -23,7 +22,7 @@ object Library {
   val scalaTest = "org.scalatest" % "scalatest_2.10" % scalaTestVersion
   val sprayTestkit = "io.spray" % "spray-testkit" % sprayVersion
   val cucumberJunit = "info.cukes" % "cucumber-junit" % cucumberVersion
-  val cucumberScala = "info.cukes" % "cucumber-scala" % cucumberScalaVersion
+  val cucumberScala = "info.cukes" %% "cucumber-scala" % cucumberVersion
   val junitInterface = "com.novocode" % "junit-interface" % junitInterfaceVersion
 
   //Primary app depends
