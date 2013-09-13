@@ -11,19 +11,9 @@ Feel free to make pull requests, or add features to issues.
 
 ## Integration tests
 
-I've got cucumber features files in development, but I'm sure I'm not doing it perfectly right.
-Right now, you have to start the integration environment by hand:
+Start the application using by entering SBT, and running `re-start`.
 
-```
-sbt 'run-main org.shlrm.jugbot.IntegrationMain'
-```
-
-Doing this will start up a database in memory, start up a TCP H2 Server, so that other things can connect to it,
-and then do the normal things, like flyway migrations, and then the actual spray-can server its self.
-
-Then, you can run the Cucumber Tests from within your browser using Junit. once the
-[cucumber sbt plugin](https://github.com/skipoleschris/xsbt-cucumber-plugin) gets [fixed](https://github.com/skipoleschris/xsbt-cucumber-plugin/issues/27)
-I'll update this stuff with that functionality.
+Then you can execute `cucumber` and the cucumber tests will execute. WINNING!
 
 ## Auto-reloading Integration test Application
 JRebel is some pretty hot stuff. What's also hot stuff is the [sbt-revolver](https://github.com/spray/sbt-revolver) plugin that can use
@@ -31,13 +21,15 @@ JRebel to automagically update your running application. Fantastic.
 
 It requires a license from JRebel, but that's [free to get for scala stuff](https://github.com/spray/sbt-revolver#jrebel).
 
+JRebel has changed to a more evil licensing scheme now, sadly. sbt-revolver no longer officially supports JRebel, as the devs have
+stopped using it. It still works for me right now, but I'm sad to say that I am far less pleased with JRebel than I used to be.
+Regardless, sbt-revolver restarts the app quickly. We're not doing J2EE nor an App Container at all. It's fast :D
+
 I've integrated that stuff into the app, so you can simply run `re-start` See the [directions here](https://github.com/spray/sbt-revolver#hot-reloading)
 
 
 ## Tech Notes
 SBT Plugins:
- * [Javascript/coffeescript compilation](https://github.com/untyped/sbt-plugins/tree/master/sbt-js)
- * [Less/Css Compilation](https://github.com/softprops/less-sbt)
  * [IDEA project generation](https://github.com/mpeltonen/sbt-idea)
  * [sbt-revolver](https://github.com/spray/sbt-revolver)
  * [sbt-cucumber](https://github.com/skipoleschris/xsbt-cucumber-plugin)
